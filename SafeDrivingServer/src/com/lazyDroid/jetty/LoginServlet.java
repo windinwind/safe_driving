@@ -31,6 +31,14 @@ public class LoginServlet extends HttpServlet{
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) 
 			throws IOException {
 		// TODO needs more things here
+		Map<String, String> parsedRequest = SafeDrivingUtils.parseRequest(request);
+		
+		if (parsedRequest == null) {
+			response.getWriter().write("status:fail");
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			return;
+		}
+		
 		response.getWriter().write("status:success");
 		response.setStatus(HttpServletResponse.SC_OK);
 	}

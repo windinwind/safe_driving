@@ -1,8 +1,6 @@
 package com.lazyDroid.jetty;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.Map;
 
 import javax.servlet.http.HttpServlet;
@@ -35,13 +33,17 @@ public class RegisterServlet extends HttpServlet{
 			throws IOException {
 		Map<String, String> parsedRequest = SafeDrivingUtils.parseRequest(request);
 		
-		if (parsedRequest == null) {
+		if (parsedRequest == null || parsedRequest.size() != 2) {
 			registerFail(response);
 			return;
 		}
 		
 		String username = parsedRequest.get("username");
 		String password = parsedRequest.get("password");
+		
+		System.out.println("User Registration");
+		System.out.println("username: " + username);
+		System.out.println("password: " + password);
 		
 		users.put(username, new User(username, BCrypt.hashpw(password, BCrypt.gensalt())));
 		response.getWriter().write("status:success");
