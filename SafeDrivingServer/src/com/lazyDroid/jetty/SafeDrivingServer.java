@@ -10,7 +10,7 @@ import org.eclipse.jetty.servlet.ServletHolder;
  * @author lazyDroid
  */
 public class SafeDrivingServer {
-	final static int PORT_NUMBER = 8080;
+	final static int PORT_NUMBER = 80;
 	
 	/**
 	 * The main function of the server. Run this function to run the
