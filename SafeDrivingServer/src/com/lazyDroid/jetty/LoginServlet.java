@@ -33,13 +33,30 @@ public class LoginServlet extends HttpServlet{
 		// TODO needs more things here
 		Map<String, String> parsedRequest = SafeDrivingUtils.parseRequest(request);
 		
-		if (parsedRequest == null) {
-			response.getWriter().write("status:fail");
-			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+		if (parsedRequest == null || parsedRequest.size() != 2) {
+			loginFail(response);
 			return;
 		}
 		
-		response.getWriter().write("status:success");
-		response.setStatus(HttpServletResponse.SC_OK);
+		String username = parsedRequest.get("username");
+		String password = parsedRequest.get("password");
+		
+		if (username == null || password == null) {
+			loginFail(response);
+			return;
+		}
+		
+		if (BCrypt.checkpw(password, users.get(username).hashedPW)) {
+			response.getWriter().write("status:success");
+			response.setStatus(HttpServletResponse.SC_OK);
+		}
+		else {
+			loginFail(response);
+		}
+	}
+	
+	private void loginFail(HttpServletResponse response) throws IOException {
+		response.getWriter().write("status:fail");
+		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 	}
 }

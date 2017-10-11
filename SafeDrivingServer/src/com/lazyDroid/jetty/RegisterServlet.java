@@ -41,9 +41,20 @@ public class RegisterServlet extends HttpServlet{
 		String username = parsedRequest.get("username");
 		String password = parsedRequest.get("password");
 		
+		if (username == null || password == null) {
+			registerFail(response);
+			return;
+		}
+		
 		System.out.println("User Registration");
 		System.out.println("username: " + username);
 		System.out.println("password: " + password);
+		
+		if (users.containsKey(username)) {
+			response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
+			response.getWriter().write("status:already_exists");
+			return;
+		}
 		
 		users.put(username, new User(username, BCrypt.hashpw(password, BCrypt.gensalt())));
 		response.getWriter().write("status:success");
