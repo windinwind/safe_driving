@@ -1,4 +1,5 @@
 package com.lazyDroid.jetty;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.io.IOException;
 
@@ -11,6 +12,7 @@ public class LoginServlet extends HttpServlet{
 	/**
 	 * The constructor of loginServlet.
 	 */
+	String presetUserPass;
 	LoginServlet() {
 		// TODO may add more things here
 	}
@@ -28,7 +30,7 @@ public class LoginServlet extends HttpServlet{
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) 
 			throws IOException {
 		// TODO needs more things here
-		response.getWriter().write("Login Servlet");
+		response.getWriter().write("status:success");
 		response.setStatus(HttpServletResponse.SC_OK);
 	}
 }
