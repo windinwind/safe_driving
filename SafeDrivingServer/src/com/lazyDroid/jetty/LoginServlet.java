@@ -2,6 +2,7 @@ package com.lazyDroid.jetty;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.io.IOException;
+import java.util.Map;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -9,10 +10,10 @@ import javax.servlet.http.HttpServletResponse;
 
 @SuppressWarnings("serial")
 public class LoginServlet extends HttpServlet{
+	static Map<String, User> users;
 	/**
-	 * The constructor of loginServlet.
+	 * The constructor of LoginServlet.
 	 */
-	String presetUserPass;
 	LoginServlet() {
 		// TODO may add more things here
 	}
