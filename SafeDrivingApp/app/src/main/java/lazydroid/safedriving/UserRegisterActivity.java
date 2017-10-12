@@ -8,12 +8,9 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
-
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
+
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
@@ -63,7 +60,10 @@ public class UserRegisterActivity extends AppCompatActivity {
                 //set user name and password into the get request
                 Log.d("before encode name", username);
                 Log.d("before encode password", password);
-                String encoded = "username:" + username +"\n" +  "password:" + password;
+                String password_hash = Base64.encodeToString((password.charAt(0) + username +
+                        password.charAt(password.length()-1) +
+                        password + "lazyDroid").getBytes("UTF-8"), Base64.NO_WRAP);
+                String encoded = "username:" + username + "\npassword:" + password_hash;
                 Log.d("encoded String", encoded);
                 urlConnection.setRequestMethod("POST");
 
