@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 @SuppressWarnings("serial")
 public class UserServlet extends HttpServlet{
 	/**
-	 * The constructor of loginServlet.
+	 * The constructor of UserServlet.
 	 */
 	UserServlet() {
 		// TODO may add more things here

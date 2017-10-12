@@ -1,5 +1,8 @@
 package com.lazyDroid.jetty;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -10,7 +13,8 @@ import org.eclipse.jetty.servlet.ServletHolder;
  * @author lazyDroid
  */
 public class SafeDrivingServer {
-	final static int PORT_NUMBER = 8080;
+	final static int PORT_NUMBER = 80;
+	static Map<String, User> users;
 	
 	/**
 	 * The main function of the server. Run this function to run the
@@ -21,6 +25,7 @@ public class SafeDrivingServer {
 	public static void main(String[] args) throws Exception {
 		// Create the server
 		Server server = new Server(PORT_NUMBER);
+		users = new HashMap<String, User>();
 		
 		// Setup the servlet handler
 		ServletHandler handler = new ServletHandler();

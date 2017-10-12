@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 @SuppressWarnings("serial")
 public class ShopServlet extends HttpServlet{
 	/**
-	 * The constructor of loginServlet.
+	 * The constructor of ShopServlet.
 	 */
 	ShopServlet() {
 		// TODO may add more things here
