@@ -17,10 +17,15 @@ public class SafeDrivingUtils {
 		if (temp == null) return null;
 		while (temp != null) {
 			String[] temp2 = temp.split(":");
-			if (temp2.length != 2) return null;
-			if (result.containsKey(temp2[0])) return null;
+			if (temp2.length != 2) {
+				return null;
+			}
+			if (result.containsKey(temp2[0])) {
+				return null;
+			}
 			
 			result.put(temp2[0], temp2[1]);
+			temp = br.readLine();
 		}
 		
 		return result;

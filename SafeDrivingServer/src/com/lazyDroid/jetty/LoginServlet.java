@@ -10,12 +10,13 @@ import javax.servlet.http.HttpServletResponse;
 
 @SuppressWarnings("serial")
 public class LoginServlet extends HttpServlet{
-	static Map<String, User> users;
+	Map<String, User> users;
 	/**
 	 * The constructor of LoginServlet.
 	 */
-	LoginServlet() {
+	LoginServlet(Map<String, User> users) {
 		// TODO may add more things here
+		this.users = users;
 	}
 	
 	/**

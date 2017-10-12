@@ -14,9 +14,10 @@ public class RegisterServlet extends HttpServlet{
 	/**
 	 * The constructor of RegisterServlet.
 	 */
-	static Map<String, User> users;
-	RegisterServlet() {
+	Map<String, User> users;
+	RegisterServlet(Map<String, User> users) {
 		// TODO may add more things here
+		this.users = users;
 	}
 	
 	/**

@@ -14,7 +14,7 @@ import org.eclipse.jetty.servlet.ServletHolder;
  */
 public class SafeDrivingServer {
 	final static int PORT_NUMBER = 80;
-	static Map<String, User> users;
+	private static Map<String, User> users;
 	
 	/**
 	 * The main function of the server. Run this function to run the
@@ -30,8 +30,8 @@ public class SafeDrivingServer {
 		// Setup the servlet handler
 		ServletHandler handler = new ServletHandler();
 		// Add all the necessary servlets to the handler
-		handler.addServletWithMapping(new ServletHolder(new LoginServlet()), "/login");
-		handler.addServletWithMapping(new ServletHolder(new RegisterServlet()), "/register");
+		handler.addServletWithMapping(new ServletHolder(new LoginServlet(users)), "/login");
+		handler.addServletWithMapping(new ServletHolder(new RegisterServlet(users)), "/register");
 		handler.addServletWithMapping(new ServletHolder(new UserServlet()), "/user");
 		handler.addServletWithMapping(new ServletHolder(new ShopServlet()), "/shop");
 		
