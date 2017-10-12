@@ -20,7 +20,7 @@ public class LoginServlet extends HttpServlet{
 	}
 	
 	/**
-	 * Handle the HTTP GET method.
+	 * Handle the HTTP POST method.
 	 * 
 	 * @param request - The HTTP request from a client.
 	 * 
@@ -29,7 +29,7 @@ public class LoginServlet extends HttpServlet{
 	 * @throws IOException When a servlet IO exception occurs.
 	 */
 	@Override
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) 
 			throws IOException {
 		// TODO needs more things here
 		Map<String, String> parsedRequest = SafeDrivingUtils.parseRequest(request);
@@ -43,9 +43,20 @@ public class LoginServlet extends HttpServlet{
 		String password = parsedRequest.get("password");
 		
 		if (username == null || password == null) {
+			System.out.println("Invalid request");
 			loginFail(response);
 			return;
 		}
+		
+		if (users.get(username) == null) {
+			System.out.println("User no found");
+			loginFail(response);
+			return;
+		}
+		
+		System.out.println("User Login");
+		System.out.println("username: " + username);
+		System.out.println("password: " + password);
 		
 		if (BCrypt.checkpw(password, users.get(username).hashedPW)) {
 			response.getWriter().write("status:success");
@@ -54,6 +65,14 @@ public class LoginServlet extends HttpServlet{
 		else {
 			loginFail(response);
 		}
+	}
+	
+	/**
+	 * For testing connection
+	 */
+	@Override
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		response.getWriter().write("<html><h1>This is the Login Servlet.</h1></html>");
 	}
 	
 	private void loginFail(HttpServletResponse response) throws IOException {
