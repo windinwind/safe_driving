@@ -9,6 +9,9 @@
 # User login pass format
 * hash(first character of the password + username + last character of the password + user password + lazyDroid)
 * example: if username = "usrabc", user password = "abcdef", the userpass should be hash("ausrabcfabcdeflazyDroid")
-* The preset user in the server is:
-  * username: lazyDroid
-  * user password: Cpen321SD#
+
+# Protocol
+* format:
+  * key:content
+  * no space near the colon
+  * each pair ends with '\n' since the server is a Windows Server
