@@ -3,6 +3,8 @@ package lazydroid.safedriving;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.TextView;
 
 public class SafeDrivingActivity extends AppCompatActivity {
 
@@ -11,8 +13,28 @@ public class SafeDrivingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_safe_driving);
 
-        Intent intent = getIntent();
-        String message = intent.getStringExtra("login");
+    }
+
+    protected void loginButtonClicked(View v) {
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivityForResult(intent, 1);
+        //startActivity(intent);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        //login success
+        if(resultCode == RESULT_OK){
+            //set username
+            TextView username = (TextView) findViewById(R.id.after_login_username);
+            if(UserInfo.getUsername() != null) {
+                username.setText(UserInfo.getUsername());
+            }
+
+            //hide login button
+            View loginbutton = findViewById(R.id.login_button);
+            loginbutton.setVisibility(View.GONE);
+        }
 
     }
 }

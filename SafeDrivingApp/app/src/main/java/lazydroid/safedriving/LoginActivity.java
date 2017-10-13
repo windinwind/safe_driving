@@ -23,7 +23,7 @@ import android.os.AsyncTask;
 import android.widget.TextView;
 
 
-public class MainActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity {
 
     public static String loginURL = "http://34.210.113.123/login";
 
@@ -97,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
 
     class NetworkConnection extends AsyncTask<String, Integer, Void> {
 
+        private String username;
 
         @Override
         protected Void doInBackground(String... params) {
@@ -136,28 +137,8 @@ public class MainActivity extends AppCompatActivity {
                 int login_status = urlConnection.getResponseCode();
                 System.out.println("server respond = " + login_status);
 
-                /*
-                BufferedReader rd = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-                //check the response from the server
-                String login_status = rd.readLine();
-                Log.d("login status is ", login_status);
-                String login_status_pair[] = login_status.split(":");
-
-                rd.close();
-                */
-                outputStream.close();
-                urlConnection.disconnect();
-
-                //TODO: if success, jump to start SD page
-                //TODO: if fails, print response message
-                /*
-                if (login_status != 202) {
-                    //TextView feedback = (TextView)findViewById(R.id.feedback_box);
-                    //feedback.setText("server error");
-                    return null;
-                }
-                */
                 if (login_status == 200) {
+                    this.username = username;
                     publishProgress(1);
                 } else {
                     //TextView feedback = (TextView)findViewById(R.id.feedback_box);
@@ -179,17 +160,15 @@ public class MainActivity extends AppCompatActivity {
             if(progress.length != 1) {
                 return;
             }
+            TextView feedback = (TextView) findViewById(R.id.feedback_box);
 
             if (progress[0].equals(1)) {
-                TextView feedback = (TextView) findViewById(R.id.feedback_box);
                 feedback.setText("Login success");
-
-                Intent intent = new Intent(MainActivity.this, SafeDrivingActivity.class);
-                intent.putExtra("login", "success");
-                startActivity(intent);
+                UserInfo.setUsername(this.username);
+                setResult(RESULT_OK, null);
+                finish();
 
             } else {
-                TextView feedback = (TextView) findViewById(R.id.feedback_box);
                 feedback.setText("Invalid username or password");
             }
         }

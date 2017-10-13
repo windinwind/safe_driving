@@ -8,6 +8,8 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
+
 import java.io.BufferedWriter;
 import java.io.IOException;
 
@@ -41,6 +43,7 @@ public class UserRegisterActivity extends AppCompatActivity {
 
     class NetworkConnection extends AsyncTask<String, Integer, Void> {
 
+        private String username;
 
         @Override
         protected Void doInBackground(String... params) {
@@ -83,7 +86,12 @@ public class UserRegisterActivity extends AppCompatActivity {
 
                 //TODO: if success, jump to start SD page
                 //TODO: if fails, print response message
-                publishProgress(1);
+                if(register_status == 200) {
+                    this.username = username;
+                    publishProgress(1);
+                }else{
+                    publishProgress(0);
+                }
 
             } catch (MalformedURLException e) {
                 e.printStackTrace();
@@ -96,10 +104,18 @@ public class UserRegisterActivity extends AppCompatActivity {
 
         @Override
         protected void onProgressUpdate(Integer... progress) {
+            if(progress.length != 1) {
+                return;
+            }
+
+            TextView feedback = (TextView) findViewById(R.id.feedback_box);
             if(progress[0].equals(1)) {
-                Intent intent = new Intent(UserRegisterActivity.this, SafeDrivingActivity.class);
-                intent.putExtra("login", "success");
-                startActivity(intent);
+                feedback.setText("Registration success");
+                //UserInfo.setUsername(this.username);
+                finish();
+
+            }else{
+                feedback.setText("Registration failed");
             }
         }
     }
