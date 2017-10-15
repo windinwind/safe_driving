@@ -37,6 +37,9 @@ public class SafeDrivingActivity extends AppCompatActivity {
                 username.setText(UserInfo.getUsername());
             }
 
+            TextView point = (TextView)findViewById(R.id.after_login_point);
+            point.setText(UserInfo.getSafepoint());
+
             //hide login button
             View loginbutton = findViewById(R.id.login_button);
             loginbutton.setVisibility(View.GONE);

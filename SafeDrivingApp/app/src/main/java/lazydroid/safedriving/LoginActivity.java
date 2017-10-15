@@ -32,8 +32,12 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    /*
+     * Do user authentication when login button clicked
+     */
     protected void loginButtonClicked(View v) {
         //System.out.println("button clicked");
+        //get user name and password
         EditText userNameEdit = (EditText) findViewById(R.id.user_name);
         EditText passwordEdit = (EditText) findViewById(R.id.password);
         String username = userNameEdit.getText().toString();
@@ -41,61 +45,17 @@ public class LoginActivity extends AppCompatActivity {
 
         Log.d("username = ", username);
         Log.d("password = ", password);
+
+        //send user info to server
         new NetworkConnection().execute(username, password);
-        //sendLoginInfo(username, password);
 
     }
 
-    protected void sendLoginInfo(String username, String password) {
-        //do network connection
-        try {
-            URL url = new URL(loginURL);
-            //establish connection with the server login page
-            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
 
-            //set user name and password into the get request
-            Log.d("before encode name", username);
-            Log.d("before encode password", password);
-            String encoded = Base64.encodeToString((username + ":" + password).getBytes("UTF-8"), Base64.NO_WRAP);
-            Log.d("encoded String", encoded);
-            urlConnection.setRequestProperty("Authorization", "Basic " + encoded);
-            urlConnection.setRequestMethod("GET");
-
-            BufferedReader rd = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-            //check the response from the server
-            String login_status = rd.readLine();
-            Log.d("login status is ", login_status);
-            String login_status_pair[] = login_status.split(":");
-
-            rd.close();
-            urlConnection.disconnect();
-
-            //TODO: if success, jump to start SD page
-            //TODO: if fails, print response message
-            if (login_status_pair.length != 2) {
-                TextView feedback = (TextView) findViewById(R.id.feedback_box);
-                feedback.setText("server error");
-                return;
-            }
-
-            if (login_status_pair[1].equals("success")) {
-
-            } else {
-                TextView feedback = (TextView) findViewById(R.id.feedback_box);
-                feedback.setText("Invalid username or password");
-            }
-
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    class NetworkConnection extends AsyncTask<String, Integer, Void> {
+    private class NetworkConnection extends AsyncTask<String, Integer, Void> {
 
         private String username;
+        private String hashedPassword;
 
         @Override
         protected Void doInBackground(String... params) {
@@ -115,7 +75,6 @@ public class LoginActivity extends AppCompatActivity {
                 //set user name and password into the get request
                 Log.d("before encode name", username);
                 Log.d("before encode password", password);
-                //String encoded = Base64.encodeToString((username + ":" + password).getBytes("UTF-8"), Base64.NO_WRAP);
 
                 //hash the password:
                 //first character of the password + username + last character of the password + user password + lazyDroid
@@ -124,23 +83,30 @@ public class LoginActivity extends AppCompatActivity {
                                 password + "lazyDroid").getBytes("UTF-8"), Base64.NO_WRAP);
                 String encoded = "username:" + username + "\npassword:" + password_hash;
                 Log.d("encoded String", encoded);
+
                 urlConnection.setRequestMethod("POST");
 
+                //write to output buffer
                 OutputStream outputStream = urlConnection.getOutputStream();
                 BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream));
                 bufferedWriter.write(encoded);
                 bufferedWriter.flush();
 
-
+                //get response from server
                 int login_status = urlConnection.getResponseCode();
                 System.out.println("server respond = " + login_status);
 
+                urlConnection.disconnect();
+                outputStream.close();
+                bufferedWriter.close();
+
                 if (login_status == 200) {
+                    //success
                     this.username = username;
+                    this.hashedPassword = password_hash;
                     publishProgress(1);
                 } else {
-                    //TextView feedback = (TextView)findViewById(R.id.feedback_box);
-                    //feedback.setText("Invalid username or password");
+                    //failed
                     publishProgress(0);
                 }
 
@@ -161,8 +127,13 @@ public class LoginActivity extends AppCompatActivity {
             TextView feedback = (TextView) findViewById(R.id.feedback_box);
 
             if (progress[0].equals(1)) {
+                //success
                 feedback.setText("Login success");
                 UserInfo.setUsername(this.username);
+                UserInfo.setPassword(this.hashedPassword);
+                UserInfo.getSafepointFromServer();
+
+                //finish this activity with success result
                 setResult(RESULT_OK, null);
                 finish();
 
@@ -173,6 +144,9 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    /*
+     * Launch register page
+     */
     protected void registerButtonClicked(View v){
         Intent intent = new Intent(this, UserRegisterActivity.class);
         startActivity(intent);
