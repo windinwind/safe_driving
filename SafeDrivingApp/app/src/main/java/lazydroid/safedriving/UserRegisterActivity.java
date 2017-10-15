@@ -35,6 +35,11 @@ public class UserRegisterActivity extends AppCompatActivity {
         String username = userNameEdit.getText().toString();
         String password = passwordEdit.getText().toString();
 
+        if(username == null || password == null || username.equals("") || password.equals("")){
+            Log.d("register", "with empty string");
+            return;
+        }
+
         Log.d("username = ", username);
         Log.d("password = ", password);
         new UserRegisterActivity.NetworkConnection().execute(username, password);
