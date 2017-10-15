@@ -35,7 +35,7 @@ public class RegisterServlet extends HttpServlet{
 		Map<String, String> parsedRequest = SafeDrivingUtils.parseRequest(request);
 		
 		if (parsedRequest == null || parsedRequest.size() != 2) {
-			registerFail(response);
+			registerFailResponse(response);
 			return;
 		}
 		
@@ -43,7 +43,7 @@ public class RegisterServlet extends HttpServlet{
 		String password = parsedRequest.get("password");
 		
 		if (username == null || password == null) {
-			registerFail(response);
+			registerFailResponse(response);
 			return;
 		}
 		
@@ -71,7 +71,7 @@ public class RegisterServlet extends HttpServlet{
 		response.getWriter().write("<html><h1>This is the Register Servlet.</h1></html>");
 	}
 	
-	private void registerFail(HttpServletResponse response) throws IOException {
+	private void registerFailResponse(HttpServletResponse response) throws IOException {
 		response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
 		response.getWriter().write("status:error");
 	}

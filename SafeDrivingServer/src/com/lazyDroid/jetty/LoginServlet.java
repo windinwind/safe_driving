@@ -1,5 +1,4 @@
 package com.lazyDroid.jetty;
-import org.mindrot.jbcrypt.BCrypt;
 
 import java.io.IOException;
 import java.util.Map;
@@ -33,37 +32,47 @@ public class LoginServlet extends HttpServlet{
 			throws IOException {
 		// TODO needs more things here
 		Map<String, String> parsedRequest = SafeDrivingUtils.parseRequest(request);
+//		
+//		if (parsedRequest == null || parsedRequest.size() != 2) {
+//			loginFail(response);
+//			return;
+//		}
+//		
+//		String username = parsedRequest.get("username");
+//		String password = parsedRequest.get("password");
+//		
+//		if (username == null || password == null) {
+//			System.out.println("Invalid request");
+//			loginFail(response);
+//			return;
+//		}
+//		
+//		if (users.get(username) == null) {
+//			System.out.println("User no found");
+//			loginFail(response);
+//			return;
+//		}
+//		
+//		System.out.println("User Login");
+//		System.out.println("username: " + username);
+//		System.out.println("password: " + password);
+//		
+//		if (BCrypt.checkpw(password, users.get(username).hashedPW)) {
+//			response.getWriter().write("status:success");
+//			response.setStatus(HttpServletResponse.SC_OK);
+//		}
+//		else {
+//			loginFail(response);
+//		}
 		
-		if (parsedRequest == null || parsedRequest.size() != 2) {
-			loginFail(response);
+		User targetUser = SafeDrivingUtils.userAuthentication(parsedRequest, users);
+		if (targetUser == null) {
+			loginFailResponse(response);
 			return;
-		}
-		
-		String username = parsedRequest.get("username");
-		String password = parsedRequest.get("password");
-		
-		if (username == null || password == null) {
-			System.out.println("Invalid request");
-			loginFail(response);
-			return;
-		}
-		
-		if (users.get(username) == null) {
-			System.out.println("User no found");
-			loginFail(response);
-			return;
-		}
-		
-		System.out.println("User Login");
-		System.out.println("username: " + username);
-		System.out.println("password: " + password);
-		
-		if (BCrypt.checkpw(password, users.get(username).hashedPW)) {
-			response.getWriter().write("status:success");
-			response.setStatus(HttpServletResponse.SC_OK);
 		}
 		else {
-			loginFail(response);
+			response.getWriter().write("status:success");
+			response.setStatus(HttpServletResponse.SC_OK);
 		}
 	}
 	
@@ -75,7 +84,7 @@ public class LoginServlet extends HttpServlet{
 		response.getWriter().write("<html><h1>This is the Login Servlet.</h1></html>");
 	}
 	
-	private void loginFail(HttpServletResponse response) throws IOException {
+	private void loginFailResponse(HttpServletResponse response) throws IOException {
 		response.getWriter().write("status:fail");
 		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 	}

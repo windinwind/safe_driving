@@ -8,6 +8,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 public class SafeDrivingUtils {
 	public static Map<String, String> parseRequest(HttpServletRequest request) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream()));
@@ -29,5 +31,27 @@ public class SafeDrivingUtils {
 		}
 		
 		return result;
+	}
+	
+	public static User userAuthentication(Map<String, String> parsedRequest, 
+			Map<String, User> users) {
+		String username = parsedRequest.get("username");
+		String password = parsedRequest.get("password");
+		
+		if (username == null || password == null) {
+			return null;
+		}
+		
+		User targetUser = users.get("username");
+		
+		if (targetUser == null) {
+			return null;
+		}
+		
+		if (!BCrypt.checkpw(password, targetUser.hashedPW)) {
+			return null;
+		}
+		
+		return targetUser;
 	}
 }
