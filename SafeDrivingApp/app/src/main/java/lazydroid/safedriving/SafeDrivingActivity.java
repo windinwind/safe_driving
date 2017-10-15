@@ -32,13 +32,15 @@ public class SafeDrivingActivity extends AppCompatActivity {
         //login success
         if(resultCode == RESULT_OK){
             //set username
+
             TextView username = (TextView) findViewById(R.id.after_login_username);
             if(UserInfo.getUsername() != null) {
                 username.setText(UserInfo.getUsername());
             }
 
             TextView point = (TextView)findViewById(R.id.after_login_point);
-            point.setText(UserInfo.getSafepoint());
+            point.setText(Integer.toString(UserInfo.getSafepoint()));
+
 
             //hide login button
             View loginbutton = findViewById(R.id.login_button);
