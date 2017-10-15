@@ -8,19 +8,27 @@ import android.widget.TextView;
 
 public class SafeDrivingActivity extends AppCompatActivity {
 
+    private static TextView point;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_safe_driving);
 
+        //initialize textview for safepoint
+        point = (TextView)findViewById(R.id.after_login_point);
     }
 
+    /*
+     * Start login page. Track if login is successful
+     */
     protected void loginButtonClicked(View v) {
         Intent intent = new Intent(this, LoginActivity.class);
         startActivityForResult(intent, 1);
-        //startActivity(intent);
     }
 
+    /*
+     * Start LockScreen. Track bad behaviour number
+     */
     protected void startDrivingButtonClicked(View v) {
         Intent intent = new Intent(this, LockScreenActivity.class);
         badBehaviorCount.getCount(this);
@@ -32,20 +40,24 @@ public class SafeDrivingActivity extends AppCompatActivity {
         //login success
         if(resultCode == RESULT_OK){
             //set username
-
             TextView username = (TextView) findViewById(R.id.after_login_username);
             if(UserInfo.getUsername() != null) {
                 username.setText(UserInfo.getUsername());
             }
 
-            TextView point = (TextView)findViewById(R.id.after_login_point);
-            point.setText(Integer.toString(UserInfo.getSafepoint()));
-
+            updateSafePointonGUI();
 
             //hide login button
             View loginbutton = findViewById(R.id.login_button);
             loginbutton.setVisibility(View.GONE);
+
+            //UserInfo.setSafepoint(6666);
         }
 
+    }
+
+
+    public static void updateSafePointonGUI(){
+        point.setText(Integer.toString(UserInfo.getSafepoint()));
     }
 }

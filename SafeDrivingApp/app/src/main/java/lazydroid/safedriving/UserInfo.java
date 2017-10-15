@@ -34,10 +34,16 @@ public class UserInfo {
         UserInfo.username = username;
     }
 
+    /*
+     * Get safepoint from local result
+     */
     public static int getSafepoint() {
         return safepoint;
     }
 
+    /*
+     * Set safepoint to a new value. Update to server simultaneously
+     */
     public static void setSafepoint(int safepoint) {
         UserInfo.safepoint = safepoint;
         new NetworkConnection().execute("put");
@@ -47,6 +53,9 @@ public class UserInfo {
         UserInfo.password = password;
     }
 
+    /*
+     * Get safepoint from server record. Must be called when first login
+     */
     public static void getSafepointFromServer(){
         new NetworkConnection().execute("get");
     }
@@ -102,6 +111,7 @@ public class UserInfo {
                         Log.d("point from server", inputs[1]);
                         Log.d("point from server - int", Integer.toString(point));
                         safepoint = point;
+                        publishProgress(1);
                     }
 
                     urlConnection.disconnect();
@@ -140,6 +150,17 @@ public class UserInfo {
             }
 
             return null;
+        }
+
+
+        @Override
+        protected void onProgressUpdate(Integer... progress){
+            if(progress.length != 1){
+                return;
+            }
+            if(progress[0] == 1){
+                SafeDrivingActivity.updateSafePointonGUI();
+            }
         }
     }
 }
