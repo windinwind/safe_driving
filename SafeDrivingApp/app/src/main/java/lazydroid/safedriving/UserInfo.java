@@ -134,6 +134,7 @@ public class UserInfo {
 
                     if(update_status == 200){
                         Log.d("point update", "success");
+                        publishProgress(1);
                     }else{
                         Log.d("point update", "failed");
                     }
