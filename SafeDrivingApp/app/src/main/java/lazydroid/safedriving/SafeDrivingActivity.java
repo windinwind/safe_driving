@@ -4,11 +4,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class SafeDrivingActivity extends AppCompatActivity {
 
     private static TextView point;
+    private ImageView user_portrait_icon;
+    private ImageView safepoint_icon;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -16,6 +19,11 @@ public class SafeDrivingActivity extends AppCompatActivity {
 
         //initialize textview for safepoint
         point = (TextView)findViewById(R.id.after_login_point);
+
+        user_portrait_icon = (ImageView)findViewById(R.id.user_portrait_icon);
+        safepoint_icon = (ImageView)findViewById(R.id.safe_point_icon);
+        user_portrait_icon.setVisibility(View.INVISIBLE);
+        safepoint_icon.setVisibility(View.INVISIBLE);
     }
 
     /*
@@ -39,6 +47,8 @@ public class SafeDrivingActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         //login success
         if(resultCode == RESULT_OK){
+            user_portrait_icon.setVisibility(View.VISIBLE);
+            safepoint_icon.setVisibility(View.VISIBLE);
             //set username
             TextView username = (TextView) findViewById(R.id.after_login_username);
             if(UserInfo.getUsername() != null) {
