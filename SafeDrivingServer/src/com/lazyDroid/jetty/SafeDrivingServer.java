@@ -32,7 +32,7 @@ public class SafeDrivingServer {
 		// Add all the necessary servlets to the handler
 		handler.addServletWithMapping(new ServletHolder(new LoginServlet(users)), "/login");
 		handler.addServletWithMapping(new ServletHolder(new RegisterServlet(users)), "/register");
-		handler.addServletWithMapping(new ServletHolder(new UserServlet()), "/user");
+		handler.addServletWithMapping(new ServletHolder(new UserServlet(users)), "/user");
 		handler.addServletWithMapping(new ServletHolder(new ShopServlet()), "/shop");
 		
 		// Run the server
