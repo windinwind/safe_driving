@@ -29,7 +29,7 @@ public class SafeDrivingActivity extends AppCompatActivity {
     /*
      * Start login page. Track if login is successful
      */
-    protected void loginButtonClicked(View v) {
+    public void loginButtonClicked(View v) {
         Intent intent = new Intent(this, LoginActivity.class);
         startActivityForResult(intent, 1);
     }
@@ -37,7 +37,7 @@ public class SafeDrivingActivity extends AppCompatActivity {
     /*
      * Start LockScreen. Track bad behaviour number
      */
-    protected void startDrivingButtonClicked(View v) {
+    public void startDrivingButtonClicked(View v) {
         Intent intent = new Intent(this, LockScreenActivity.class);
         badBehaviorCount.getCount(this);
         startActivity(intent);

@@ -10,10 +10,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
@@ -29,13 +27,12 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
     }
 
     /*
      * Do user authentication when login button clicked
      */
-    protected void loginButtonClicked(View v) {
+    public void loginButtonClicked(View v) {
         //System.out.println("button clicked");
         //get user name and password
         EditText userNameEdit = (EditText) findViewById(R.id.user_name);
@@ -151,7 +148,7 @@ public class LoginActivity extends AppCompatActivity {
     /*
      * Launch register page
      */
-    protected void registerButtonClicked(View v){
+    public void registerButtonClicked(View v){
         Intent intent = new Intent(this, UserRegisterActivity.class);
         startActivity(intent);
     }
