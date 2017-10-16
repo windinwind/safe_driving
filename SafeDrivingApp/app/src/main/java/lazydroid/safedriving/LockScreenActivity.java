@@ -53,8 +53,8 @@ public class LockScreenActivity extends AppCompatActivity {
     }
 
     /**
-     * A simple method that sets the screen to fullscreen.  It removes the Notifications bar,
-     *   the Actionbar and the virtual keys (if they are on the phone)
+     * The method that sets the screen to fullscreen.  It removes the Notifications bar,
+     * the Actionbar and the virtual keys (if they are on the phone)
      */
     public void makeFullScreen() {
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -69,8 +69,12 @@ public class LockScreenActivity extends AppCompatActivity {
     }
 
     public void unlockScreen(View view) {
-        //Instead of using finish(), this totally destroys the processs
+        //Increment the bad behavior count everytime the user quits
         badBehaviorCount.incCount(this);
+
+        int safePoints = UserInfo.getSafepoint() - 1;
+        UserInfo.setSafepoint(safePoints);
+
         finish();
     }
 }

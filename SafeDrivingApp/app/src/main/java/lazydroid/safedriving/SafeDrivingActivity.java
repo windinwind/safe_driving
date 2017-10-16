@@ -12,7 +12,6 @@ public class SafeDrivingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_safe_driving);
-
     }
 
     protected void loginButtonClicked(View v) {
