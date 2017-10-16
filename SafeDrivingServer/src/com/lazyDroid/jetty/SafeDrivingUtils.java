@@ -39,16 +39,19 @@ public class SafeDrivingUtils {
 		String password = parsedRequest.get("password");
 		
 		if (username == null || password == null) {
+			System.out.println("username or password is null");
 			return null;
 		}
 		
-		User targetUser = users.get("username");
+		User targetUser = users.get(username);
 		
 		if (targetUser == null) {
+			System.out.println("targetUser is null");
 			return null;
 		}
 		
 		if (!BCrypt.checkpw(password, targetUser.hashedPW)) {
+			System.out.println("incorrect password");
 			return null;
 		}
 		

@@ -64,7 +64,6 @@ public class LoginServlet extends HttpServlet{
 //		else {
 //			loginFail(response);
 //		}
-		
 		User targetUser = SafeDrivingUtils.userAuthentication(parsedRequest, users);
 		if (targetUser == null) {
 			loginFailResponse(response);

@@ -63,13 +63,15 @@ public class UserServlet extends HttpServlet{
 			return;
 		}
 		
-		User targetUser = users.get("username");
-		if (username == null || password == null) {
+		User targetUser = users.get(username);
+		if (targetUser == null) {
 			invalidUserResponse(response);
 			return;
 		}
 		
+		System.out.println(username + " is getting point");
 		response.getWriter().write("point:" + targetUser.getSafePoint());
+		System.out.println("user servlet response: point:" + targetUser.getSafePoint());
 		response.setStatus(HttpServletResponse.SC_OK);
 	}
 	
