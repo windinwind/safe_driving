@@ -22,7 +22,7 @@ public class UserInfo {
 
     private static String username;
     private static String password;
-    private static int safepoint;
+    private static int safepoint = 0;
 
     private static String userURL = "http://34.210.113.123/user";
 
@@ -34,10 +34,16 @@ public class UserInfo {
         UserInfo.username = username;
     }
 
+    /*
+     * Get safepoint from local result
+     */
     public static int getSafepoint() {
         return safepoint;
     }
 
+    /*
+     * Set safepoint to a new value. Update to server simultaneously
+     */
     public static void setSafepoint(int safepoint) {
         UserInfo.safepoint = safepoint;
         new NetworkConnection().execute("put");
@@ -47,6 +53,9 @@ public class UserInfo {
         UserInfo.password = password;
     }
 
+    /*
+     * Get safepoint from server record. Must be called when first login
+     */
     public static void getSafepointFromServer(){
         new NetworkConnection().execute("get");
     }
@@ -68,7 +77,7 @@ public class UserInfo {
                 }
 
                 if(params[0].equals("get")){
-
+                    Log.d("trying to get point", "username, password = " + username + " " + password);
                     //set url based on username
                     String getPointURL = userURL + "?username=" + username;
                     URL url = new URL(getPointURL);
@@ -84,12 +93,13 @@ public class UserInfo {
                     BufferedReader response = new BufferedReader(
                             new InputStreamReader(urlConnection.getInputStream()));
                     String inputLine = response.readLine();
+                    if(inputLine == null || !inputLine.contains(":")){
+                        Log.d("response illegal", "input line null or no :");
+                        return null;
+                    }
                     String[] inputs = inputLine.split(":");
 
                     Log.d("get point", inputLine);
-
-                    urlConnection.disconnect();
-                    response.close();
 
                     //update safepoint according to response
                     if(inputs.length != 2){
@@ -97,8 +107,15 @@ public class UserInfo {
                     }
 
                     if(inputs[0].equals("point")){
-                        UserInfo.setSafepoint(Integer.getInteger(inputs[1]));
+                        int point = Integer.parseInt(inputs[1]);
+                        Log.d("point from server", inputs[1]);
+                        Log.d("point from server - int", Integer.toString(point));
+                        safepoint = point;
+                        publishProgress(1);
                     }
+
+                    urlConnection.disconnect();
+                    response.close();
 
                 }else if(params[0].equals("put")){
                     URL url = new URL(userURL);
@@ -133,6 +150,17 @@ public class UserInfo {
             }
 
             return null;
+        }
+
+
+        @Override
+        protected void onProgressUpdate(Integer... progress){
+            if(progress.length != 1){
+                return;
+            }
+            if(progress[0] == 1){
+                SafeDrivingActivity.updateSafePointonGUI();
+            }
         }
     }
 }
