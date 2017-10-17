@@ -1,7 +1,6 @@
 package lazydroid.safedriving;
 
 import android.os.AsyncTask;
-import android.util.Base64;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -64,106 +63,156 @@ public class UserInfo {
         new NetworkConnection().execute("get");
     }
 
-    private static class NetworkConnection extends AsyncTask<String, Integer, Void> {
+    private static class NetworkConnection extends AsyncTask<String, Boolean, Void> {
 
+        private final int ERR = -1;
+        private final boolean SUCCESS = true;
         @Override
         protected Void doInBackground(String... params) {
+            //do checks before connect to server
+            if(params.length != 1){
+                Log.d("get/update safe point", "incorrect argument length");
+                return null;
+            }
+
+            if(username == null || password == null){
+                //username or password doesn't exist
+                Log.d("get/update safe point", "username/password doesn't exist");
+                return null;
+            }
+                String method = params[0];
+
             try {
-                if(params.length != 1){
-                    Log.d("get/update safe point", "incorrect argument length");
-                    return null;
-                }
 
-                if(username == null || password == null){
-                    //username or password doesn't exist
-                    Log.d("get/update safe point", "username/password doesn't exist");
-                    return null;
-                }
-
-                if(params[0].equals("get")){
+                if(method.equals("get")){
                     Log.d("trying to get point", "username, password = " + username + " " + password);
                     //set url based on username
-                    String getPointURL = userURL + "?username=" + username;
-                    URL url = new URL(getPointURL);
+                    URL url = new URL(userURL + "?username=" + username);
 
-                    //establish connection with the server username page
-                    HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                    int point = getPointFromServer(url, password);
 
-                    //set header
-                    urlConnection.setRequestMethod("GET");
-                    urlConnection.setRequestProperty("Authorization",password);
-
-                    //get response from the server
-                    BufferedReader response = new BufferedReader(
-                            new InputStreamReader(urlConnection.getInputStream()));
-                    String inputLine = response.readLine();
-                    if(inputLine == null || !inputLine.contains(":")){
-                        Log.d("response illegal", "input line null or no :");
-                        return null;
-                    }
-                    String[] inputs = inputLine.split(":");
-
-                    Log.d("get point", inputLine);
-
-                    //update safepoint according to response
-                    if(inputs.length != 2){
-                        return null;
-                    }
-
-                    if(inputs[0].equals("point")){
-                        int point = Integer.parseInt(inputs[1]);
-                        Log.d("point from server", inputs[1]);
-                        Log.d("point from server - int", Integer.toString(point));
+                    if(point != ERR) {
+                        //set safepoint to server response
                         safepoint = point;
-                        publishProgress(1);
+                        //notify main thread
+                        publishProgress(SUCCESS);
                     }
 
-                    urlConnection.disconnect();
-                    response.close();
-
-                }else if(params[0].equals("put")){
+                }else if(method.equals("put")){
                     URL url = new URL(userURL);
-                    //establish connection with the server login page
-                    HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                    urlConnection.setRequestMethod("PUT");
+                    String content = "username:" + username + "\npassword:" + password + "\nupdate:" + safepoint + "\n";
 
-                    OutputStream outputStream = urlConnection.getOutputStream();
-                    BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream));
-                    bufferedWriter.write("username:"+ username + "\npassword:" + password + "\nupdate:" + safepoint + "\n");
-                    bufferedWriter.flush();
+                    //put user's point to server
+                    boolean success = putPointToServer(url, content);
 
-                    //get response from server
-                    int update_status = urlConnection.getResponseCode();
-                    System.out.println("update respond = " + update_status);
-
-                    if(update_status == 200){
-                        Log.d("point update", "success");
-                        publishProgress(1);
-                    }else{
-                        Log.d("point update", "failed");
+                    //notify main thread
+                    if(success){
+                        publishProgress(SUCCESS);
                     }
-
-                }else{
-                    //undefined method
-                    return null;
                 }
 
             } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
                 e.printStackTrace();
             }
 
             return null;
         }
 
+        /*
+         * Update the given content to the given url
+         * return 1 if success, 0 otherwise
+         */
+        private boolean putPointToServer(URL url, String content){
+            boolean success = false;
+            //establish connection with the server login page
+            try {
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("PUT");
+
+                OutputStream outputStream = urlConnection.getOutputStream();
+                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream));
+                bufferedWriter.write(content);
+                bufferedWriter.flush();
+
+                //get response from server
+                int update_status = urlConnection.getResponseCode();
+                System.out.println("update respond = " + update_status);
+
+                if (update_status == 200) {
+                    Log.d("point update", "success");
+                    success = true;
+
+                } else {
+                    Log.d("point update", "failed");
+                    success = false;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return success;
+        }
+
+
+        /*
+         * Establish connection with the url, send get store request with authentication
+         * Return the server reponse point
+         */
+        private int getPointFromServer(URL url, String authentication){
+            int point = 0;
+
+            try {
+                //establish connection
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("GET");
+                urlConnection.setRequestProperty("Authorization",authentication);
+
+                //get response from the server
+                BufferedReader response = new BufferedReader(
+                        new InputStreamReader(urlConnection.getInputStream()));
+                String inputLine = response.readLine();
+
+                //close connection
+                urlConnection.disconnect();
+                response.close();
+
+                //check server response format
+                if(inputLine == null || !inputLine.contains(":")){
+                    Log.d("response illegal", "input line null or no :");
+                    return ERR;
+                }
+
+                String[] inputs = inputLine.split(":");
+
+                Log.d("get point", inputLine);
+
+                //update safepoint according to response
+                if(inputs.length != 2){
+                    return ERR;
+                }
+
+                if(inputs[0].equals("point")){
+                    point = Integer.parseInt(inputs[1]);
+                    Log.d("point from server", inputs[1]);
+
+                }else{
+                    return ERR;
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return point;
+        }
 
         @Override
-        protected void onProgressUpdate(Integer... progress){
+        protected void onProgressUpdate(Boolean... progress){
+            //check argument length
             if(progress.length != 1){
                 return;
             }
-            if(progress[0] == 1){
+
+            //the update was success, needs to update GUI
+            if(progress[0] == SUCCESS){
                 SafeDrivingActivity.updateSafePointonGUI();
             }
         }
