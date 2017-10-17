@@ -43,4 +43,9 @@ public class badBehaviorCount {
         int newCount = oldCount + 1;
         storeCount(context, newCount);
     }
+
+    protected static void resetCount(Context context) {
+        SharedPreferences mSharedPreferences = context.getSharedPreferences(PREF_NAME, MODE_PRIVATE);
+        storeCount(context, 0);
+    }
 }

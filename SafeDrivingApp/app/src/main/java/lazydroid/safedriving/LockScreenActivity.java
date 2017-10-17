@@ -19,6 +19,7 @@ public class LockScreenActivity extends AppCompatActivity {
     TextView textTimer;
     long startTime;
     long countUp;
+    private String message = "Unlock Times: ";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,12 +28,9 @@ public class LockScreenActivity extends AppCompatActivity {
         //Set up the lockscreen
         makeFullScreen();
 
-        String message = "Unlock Times: ";
-        int unlockTimes = badBehaviorCount.getCount(this);
 
         setContentView(R.layout.activity_lock_screen);
-        textCount = (TextView) findViewById(R.id.badBehavCountText);
-        textCount.setText(message + unlockTimes);
+
 
         //Make a textbox that displays the time since entering the lockscreen
         Chronometer stopWatch = (Chronometer) findViewById(R.id.chrono);
@@ -46,10 +44,27 @@ public class LockScreenActivity extends AppCompatActivity {
                 textTimer.setText(asText);
             }
         });
+        badBehaviorCount.resetCount(this);
         stopWatch.start();
 
         //Start the lockscreen service to disable the keys
         startService(new Intent(this,LockScreenService.class));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        int unlockTimes = badBehaviorCount.getCount(this);
+        textCount = (TextView) findViewById(R.id.badBehavCountText);
+        textCount.setText(message + unlockTimes);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        badBehaviorCount.incCount(this);
+        UserInfo.setLocalSafepoint(UserInfo.getSafepoint() - 1);
     }
 
     /**
@@ -70,10 +85,9 @@ public class LockScreenActivity extends AppCompatActivity {
 
     public void unlockScreen(View view) {
         //Increment the bad behavior count everytime the user quits
-        badBehaviorCount.incCount(this);
 
-        int safePoints = UserInfo.getSafepoint() - 1;
-        UserInfo.setSafepoint(safePoints);
+
+        UserInfo.setSafepoint(UserInfo.getSafepoint() + 1);
 
         finish();
     }

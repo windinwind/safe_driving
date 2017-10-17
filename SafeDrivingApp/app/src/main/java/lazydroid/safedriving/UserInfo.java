@@ -41,6 +41,10 @@ public class UserInfo {
         return safepoint;
     }
 
+    public static void setLocalSafepoint(int safepoint) {
+        UserInfo.safepoint = safepoint;
+    }
+
     /*
      * Set safepoint to a new value. Update to server simultaneously
      */
