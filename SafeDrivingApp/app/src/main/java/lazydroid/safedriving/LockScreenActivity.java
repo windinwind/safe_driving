@@ -64,7 +64,7 @@ public class LockScreenActivity extends AppCompatActivity {
         super.onPause();
 
         badBehaviorCount.incCount(this);
-        UserInfo.setLocalSafepoint(UserInfo.getSafepoint() - 1);
+        UserInfo.setSafepoint(UserInfo.getSafepoint() - 1);
     }
 
     /**

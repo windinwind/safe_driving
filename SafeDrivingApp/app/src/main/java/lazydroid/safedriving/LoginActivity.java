@@ -1,5 +1,6 @@
 package lazydroid.safedriving;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -22,11 +23,16 @@ import java.net.URL;
 public class LoginActivity extends AppCompatActivity {
 
     public static String loginURL = "http://34.210.113.123/login";
+    private static Activity activity = null;
+    private static TextView feedback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        activity = this;
+        feedback = (TextView) findViewById(R.id.feedback_box);
     }
 
     /*
@@ -48,101 +54,21 @@ public class LoginActivity extends AppCompatActivity {
         Log.d("password = ", password);
 
         //send user info to server
-        new NetworkConnection().execute(username, password);
-
+        //new NetworkConnection().execute(username, password);
+        new NetworkService().execute("login_post", username, password, "0");
     }
 
+    public static void updateStatus(boolean success){
 
-    private class NetworkConnection extends AsyncTask<String, Integer, Void> {
+        if(success && UserInfo.getUsername() != null){
+            feedback.setText("Login success");
+            //finish this activity with success result
+            activity.setResult(RESULT_OK, null);
+            activity.finish();
 
-        private String username;
-        private String hashedPassword;
-
-        @Override
-        protected Void doInBackground(String... params) {
-            if (params.length != 2) {
-                Log.d("doInBackground: ", "argument number wrong");
-                return null;
-            }
-            String username = params[0];
-            String password = params[1];
-
-            //do network connection
-            try {
-                URL url = new URL(loginURL);
-                //establish connection with the server login page
-                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-
-                //set user name and password into the get request
-                Log.d("before encode name", username);
-                Log.d("before encode password", password);
-
-                //hash the password:
-                //first character of the password + username + last character of the password + user password + lazyDroid
-                String password_hash = Base64.encodeToString((password.charAt(0) + username +
-                                password.charAt(password.length()-1) +
-                                password + "lazyDroid").getBytes("UTF-8"), Base64.NO_WRAP);
-                String encoded = "username:" + username + "\npassword:" + password_hash;
-                Log.d("encoded String", encoded);
-
-                urlConnection.setRequestMethod("POST");
-
-                //write to output buffer
-                OutputStream outputStream = urlConnection.getOutputStream();
-                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream));
-                bufferedWriter.write(encoded);
-                bufferedWriter.flush();
-
-                //get response from server
-                int login_status = urlConnection.getResponseCode();
-                System.out.println("server respond = " + login_status);
-
-                urlConnection.disconnect();
-                outputStream.close();
-                bufferedWriter.close();
-
-                if (login_status == 200) {
-                    //success
-                    this.username = username;
-                    this.hashedPassword = password_hash;
-                    publishProgress(1);
-                } else {
-                    //failed
-                    publishProgress(0);
-                }
-
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            return null;
+        }else{
+            feedback.setText("Invalid username or password");
         }
-
-        @Override
-        protected void onProgressUpdate(Integer... progress) {
-            if(progress.length != 1) {
-                return;
-            }
-            TextView feedback = (TextView) findViewById(R.id.feedback_box);
-
-            if (progress[0].equals(1)) {
-                //success
-                feedback.setText("Login success");
-                UserInfo.setUsername(this.username);
-                UserInfo.setPassword(this.hashedPassword);
-                UserInfo.getSafepointFromServer();
-
-                //finish this activity with success result
-                setResult(RESULT_OK, null);
-                finish();
-
-            } else {
-                feedback.setText("Invalid username or password");
-            }
-        }
-
     }
 
     /*
