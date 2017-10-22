@@ -35,33 +35,41 @@ public class SafeDrivingUtils {
 	 *             request content.
 	 */
 	public static Map<String, String> parseRequest(HttpServletRequest request) throws IOException {
-		if (request == null)
-			throw new IOException();
-
 		// Get the reader for reading the request contents
-		ServletInputStream requestInputStream = request.getInputStream();
-		InputStreamReader requestReader = new InputStreamReader(requestInputStream);
-		BufferedReader br = new BufferedReader(requestReader);
+		BufferedReader br = getRequestReader(request);
 
 		Map<String, String> result = new HashMap<String, String>();
 
-		String temp = br.readLine();
-		if (temp == null)
+		String thisLine = br.readLine();
+		if (thisLine == null)
 			return null; // Content checking
-		while (temp != null) {
-			String[] temp2 = temp.split(":");
-			if (temp2.length != 2) {
+		while (thisLine != null) {
+			String[] temp = thisLine.split(":");
+			if (temp.length != 2) {
 				return null; // Format checking
 			}
-			if (result.containsKey(temp2[0])) {
+			if (result.containsKey(temp[0])) {
 				return null; // Duplication checking
 			}
 
-			result.put(temp2[0], temp2[1]);
-			temp = br.readLine();
+			result.put(temp[0], temp[1]);
+			thisLine = br.readLine();
 		}
 
 		return result;
+	}
+	
+	/**
+	 * Helper method that creates a reader for reading the request content.
+	 * @param request - An HTTP request.
+	 * @return A reader for reading the request content.
+	 * @throws IOException The HTTP request is null or failed to create the reader.
+	 */
+	private static BufferedReader getRequestReader(HttpServletRequest request) throws IOException {
+		if (request == null)
+			throw new IOException();
+		
+		return new BufferedReader(new InputStreamReader(request.getInputStream()));
 	}
 
 	/**
