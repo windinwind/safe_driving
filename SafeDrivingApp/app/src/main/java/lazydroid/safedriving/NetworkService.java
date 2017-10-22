@@ -34,6 +34,15 @@ public class NetworkService extends AsyncTask<String, Boolean, Void> {
     private String valid_password = "";
     private int valid_point = 0;
 
+    private boolean checkInputValid(String input){
+        //check null pointer
+        if(input == null || input.equals("")){
+            return false;
+        }
+        return true;
+    }
+
+
     @Override
     protected Void doInBackground(String... params) {
         //do checks before connect to server
@@ -48,51 +57,30 @@ public class NetworkService extends AsyncTask<String, Boolean, Void> {
         String safepoint = params[3];
 
         //check argument validity
-        if(method == null || username == null || password == null || safepoint == null ||
-                method.equals("") || username.equals("") || password == ("") || safepoint == ("")){
+        if(!checkInputValid(method) ||
+                !checkInputValid(username) ||
+                !checkInputValid(password) ||
+                !checkInputValid(safepoint)){
             return null;
         }
 
         try {
 
             if(method.equals("login_post") || method.equals("register_post")){
-                this.valid_method = method;
 
-                Log.d("before encode name", username);
-                Log.d("before encode password", password);
-
-                URL url;
-                if(method.equals("login_post")) {
-                    url = new URL(loginURL);
-                }else{
-                    url = new URL(registerURL);
-                }
-                String password_hash = Base64.encodeToString((password.charAt(0) + username +
-                        password.charAt(password.length() - 1) +
-                        password + "lazyDroid").getBytes("UTF-8"), Base64.NO_WRAP);
-                String encoded = "username:" + username + "\npassword:" + password_hash;
-
-                Log.d("encoded String", encoded);
-
-                boolean success = postToServer(url, encoded);
+                boolean success = prepareForPost(method, username, password);
                 if(success){
-                    this.valid_username = username;
-                    this.valid_password = password_hash;
-
-                    if(method.equals("login_post")){
-                        UserInfo.setUsername(this.valid_username);
-                        UserInfo.setPassword(this.valid_password);
-                        UserInfo.getSafepointFromServer();
-                    }
                     publishProgress(SUCCESS);
                 }else{
                     publishProgress(FAIL);
                 }
+                return null;
+            }
 
-            }else if(method.equals("get")){
+            if(method.equals("get")){
                 this.valid_method = method;
 
-                Log.d("trying to get point", "username, password = " + username + " " + password);
+                //Log.d("trying to get point", "username, password = " + username + " " + password);
                 //set url based on username
                 URL url = new URL(userURL + "?username=" + username);
 
@@ -102,16 +90,18 @@ public class NetworkService extends AsyncTask<String, Boolean, Void> {
                     //set safepoint to server response
                     UserInfo.setSafepointLocal(point);
                     //notify main thread
-                    Log.d("get success", "calling publish progress");
+                    //Log.d("get success", "calling publish progress");
                     publishProgress(SUCCESS);
                 }
+                return null;
+            }
 
-            }else if(method.equals("put")){
+            if(method.equals("put")){
                 this.valid_method = method;
 
                 URL url = new URL(userURL);
                 String content = "username:" + username + "\npassword:" + password + "\nupdate:" + safepoint + "\n";
-                Log.d("updating points", content);
+                //Log.d("updating points", content);
                 //put user's point to server
                 boolean success = putPointToServer(url, content);
 
@@ -230,31 +220,56 @@ public class NetworkService extends AsyncTask<String, Boolean, Void> {
 
             //check server response format
             if(inputLine == null || !inputLine.contains(":")){
-                Log.d("response illegal", "input line null or no :");
                 return ERR;
             }
 
             String[] inputs = inputLine.split(":");
 
-            Log.d("get point", inputLine);
-
             //update safepoint according to response
-            if(inputs.length != 2){
+            if(inputs.length != 2 || !inputs[0].equals("point")){
                 return ERR;
             }
 
-            if(inputs[0].equals("point")){
-                point = Integer.parseInt(inputs[1]);
-                Log.d("point from server", inputs[1]);
-
-            }else{
-                return ERR;
-            }
+            point = Integer.parseInt(inputs[1]);
 
         } catch (IOException e) {
             e.printStackTrace();
         }
         return point;
+    }
+
+    /*
+     * Prepare for URL and content to post to server
+     */
+    private boolean prepareForPost(String method, String username, String password)
+            throws MalformedURLException, UnsupportedEncodingException{
+        this.valid_method = method;
+
+        //Log.d("before encode name", username);
+        //Log.d("before encode password", password);
+        URL url;
+        if(method.equals("login_post")) {
+            url = new URL(loginURL);
+        }else{
+            url = new URL(registerURL);
+        }
+        String password_hash = Base64.encodeToString((password.charAt(0) + username +
+                password.charAt(password.length() - 1) +
+                password + "lazyDroid").getBytes("UTF-8"), Base64.NO_WRAP);
+        String encoded = "username:" + username + "\npassword:" + password_hash;
+
+        boolean result =  postToServer(url, encoded);
+        if(result) {
+            this.valid_username = username;
+            this.valid_password = password_hash;
+
+            if (method.equals("login_post")) {
+                UserInfo.setUsername(this.valid_username);
+                UserInfo.setPassword(this.valid_password);
+                UserInfo.getSafepointFromServer();
+            }
+        }
+        return result;
     }
 
     @Override
@@ -268,13 +283,19 @@ public class NetworkService extends AsyncTask<String, Boolean, Void> {
         if((this.valid_method.equals("get") || this.valid_method.equals("put")) && progress[0] == SUCCESS){
             Log.d("updated point", Integer.toString(UserInfo.getSafepoint()));
             SafeDrivingActivity.updateSafePointonGUI();
-        }else if(this.valid_method.equals("login_post")){
+            return;
+        }
+
+        if(this.valid_method.equals("login_post")){
             if(progress[0] == SUCCESS) {
                 LoginActivity.updateStatus(SUCCESS);
             }else{
                 LoginActivity.updateStatus(FAIL);
             }
-        }else if(this.valid_method.equals("register_post")){
+            return;
+        }
+
+        if(this.valid_method.equals("register_post")){
             if(progress[0] == SUCCESS) {
                 UserRegisterActivity.updateStatus(SUCCESS);
             }else{

@@ -73,5 +73,5 @@ public class UserInfo {
     public static void setSafepointLocal(int safepoint){
         UserInfo.safepoint = safepoint;
     }
-    
+
 }
