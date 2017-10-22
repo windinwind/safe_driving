@@ -66,21 +66,13 @@ public class NetworkService extends AsyncTask<String, Boolean, Void> {
 
         try {
 
+            boolean success = false;
             if(method.equals("login_post") || method.equals("register_post")){
+                success = prepareForPost(method, username, password);
 
-                boolean success = prepareForPost(method, username, password);
-                if(success){
-                    publishProgress(SUCCESS);
-                }else{
-                    publishProgress(FAIL);
-                }
-                return null;
-            }
-
-            if(method.equals("get")){
+            }else if(method.equals("get")){
                 this.valid_method = method;
 
-                //Log.d("trying to get point", "username, password = " + username + " " + password);
                 //set url based on username
                 URL url = new URL(userURL + "?username=" + username);
 
@@ -89,26 +81,18 @@ public class NetworkService extends AsyncTask<String, Boolean, Void> {
                 if(point != ERR) {
                     //set safepoint to server response
                     UserInfo.setSafepointLocal(point);
-                    //notify main thread
-                    //Log.d("get success", "calling publish progress");
-                    publishProgress(SUCCESS);
+                    success = true;
                 }
-                return null;
+            }else if(method.equals("put")){
+                success = prepareForPut(method, username, password, safepoint);
+
             }
 
-            if(method.equals("put")){
-                this.valid_method = method;
-
-                URL url = new URL(userURL);
-                String content = "username:" + username + "\npassword:" + password + "\nupdate:" + safepoint + "\n";
-                //Log.d("updating points", content);
-                //put user's point to server
-                boolean success = putPointToServer(url, content);
-
-                //notify main thread
-                if(success){
-                    publishProgress(SUCCESS);
-                }
+            //notify main thread
+            if(success){
+                publishProgress(SUCCESS);
+            }else{
+                publishProgress(FAIL);
             }
 
         } catch (MalformedURLException e) {
@@ -271,6 +255,22 @@ public class NetworkService extends AsyncTask<String, Boolean, Void> {
         }
         return result;
     }
+
+    /*
+     * Prepare the url and content to send to the server
+     */
+    private boolean prepareForPut(String method, String username, String password, String safepoint)
+            throws MalformedURLException{
+
+        this.valid_method = method;
+
+        URL url = new URL(userURL);
+        String content = "username:" + username + "\npassword:" + password + "\nupdate:" + safepoint + "\n";
+        //Log.d("updating points", content);
+        //put user's point to server
+        return putPointToServer(url, content);
+    }
+
 
     @Override
     protected void onProgressUpdate(Boolean... progress){

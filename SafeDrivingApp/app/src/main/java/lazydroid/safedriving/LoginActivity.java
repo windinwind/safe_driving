@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -26,6 +27,11 @@ public class LoginActivity extends AppCompatActivity {
     private static Activity activity = null;
     private static TextView feedback;
 
+    private EditText userNameEdit;
+    private EditText passwordEdit;
+
+    private CheckBox remember;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,16 +39,25 @@ public class LoginActivity extends AppCompatActivity {
 
         activity = this;
         feedback = (TextView) findViewById(R.id.feedback_box);
+
+        remember = (CheckBox) findViewById(R.id.remember_user_info);
+        String password = "";
+        if(remember.isChecked()){
+            password = UserInfo.getStoredUserInfo(this);
+        }
+
+        userNameEdit = (EditText) findViewById(R.id.user_name);
+        passwordEdit = (EditText) findViewById(R.id.password);
+        userNameEdit.setText(UserInfo.getUsername());
+        passwordEdit.setText(password);
+
     }
 
     /*
      * Do user authentication when login button clicked
      */
     public void loginButtonClicked(View v) {
-        //System.out.println("button clicked");
         //get user name and password
-        EditText userNameEdit = (EditText) findViewById(R.id.user_name);
-        EditText passwordEdit = (EditText) findViewById(R.id.password);
         String username = userNameEdit.getText().toString();
         String password = passwordEdit.getText().toString();
         if(username == null || password == null || username.equals("") || password.equals("")){
@@ -50,9 +65,17 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        Log.d("username = ", username);
-        Log.d("password = ", password);
-
+        if(remember.isChecked()){
+            //store current userinfo
+            UserInfo.setUsername(username);
+            UserInfo.setPassword(password);
+            UserInfo.updateStoredUserInfo(this);
+        }else{
+            //clear stored userinfo
+            UserInfo.setUsername("");
+            UserInfo.setPassword("");
+            UserInfo.updateStoredUserInfo(this);
+        }
         //send user info to server
         //new NetworkConnection().execute(username, password);
         new NetworkService().execute("login_post", username, password, "0");

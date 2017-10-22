@@ -1,17 +1,10 @@
 package lazydroid.safedriving;
 
-import android.os.AsyncTask;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by helen on 2017-10-13.
@@ -23,7 +16,22 @@ public class UserInfo {
     private static String password;
     private static int safepoint = 0;
 
-    private static String userURL = "http://34.210.113.123/user";
+    private static String REMEMBER_USER_INFO = "userInfo";
+
+    public static void updateStoredUserInfo(Context context) {
+        SharedPreferences mSharedPreferences = context.getSharedPreferences(REMEMBER_USER_INFO, MODE_PRIVATE);
+        SharedPreferences.Editor mEditor = mSharedPreferences.edit();
+        mEditor.putString("username",username);
+        mEditor.putString("password", password);
+        mEditor.apply();
+    }
+
+    public static String getStoredUserInfo(Context context){
+        SharedPreferences mSharedPreferences = context.getSharedPreferences(REMEMBER_USER_INFO, MODE_PRIVATE);
+        username = mSharedPreferences.getString("username", "");
+        password = mSharedPreferences.getString("password", "");
+        return password;
+    }
 
     public static String getUsername() {
         return UserInfo.username;
