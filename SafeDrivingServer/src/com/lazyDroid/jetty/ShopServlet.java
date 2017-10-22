@@ -7,26 +7,28 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @SuppressWarnings("serial")
-public class ShopServlet extends HttpServlet{
+public class ShopServlet extends HttpServlet {
 	/**
 	 * The constructor of ShopServlet.
 	 */
 	ShopServlet() {
 		// TODO may add more things here
 	}
-	
+
 	/**
 	 * Handle the HTTP GET method.
 	 * 
-	 * @param request - The HTTP request from a client.
+	 * @param request
+	 *            - The HTTP request from a client.
 	 * 
-	 * @param response - The HTTP response that will be send to the client.
+	 * @param response
+	 *            - The HTTP response that will be send to the client.
 	 * 
-	 * @throws IOException When a servlet IO exception occurs.
+	 * @throws IOException
+	 *             When a servlet IO exception occurs.
 	 */
 	@Override
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) 
-			throws IOException {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		// TODO needs more things here
 		response.getWriter().write("Shop Servlet");
 		response.setStatus(HttpServletResponse.SC_OK);

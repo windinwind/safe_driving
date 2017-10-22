@@ -6,55 +6,122 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.mindrot.jbcrypt.BCrypt;
 
+/**
+ * Utility class for safe driving server.
+ * 
+ * @author Kyrin Feng
+ *
+ */
 public class SafeDrivingUtils {
+	/**
+	 * Parse the content of the HTTP request based on the simple protocol
+	 * ("tag:content").
+	 * 
+	 * @param request
+	 *            - An HTTP servlet request that contains the content for parsing.
+	 * 
+	 * @return The map which contains the parsed request. The keys of this map
+	 *         correspond to the tags, and the values of this map correspond to the
+	 *         contents. Return null if the format of the request is not valid.
+	 * 
+	 * @throws IOException
+	 *             when the request is null or an error occurs when reading the
+	 *             request content.
+	 */
 	public static Map<String, String> parseRequest(HttpServletRequest request) throws IOException {
-		BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream()));
+		if (request == null)
+			throw new IOException();
+
+		// Get the reader for reading the request contents
+		ServletInputStream requestInputStream = request.getInputStream();
+		InputStreamReader requestReader = new InputStreamReader(requestInputStream);
+		BufferedReader br = new BufferedReader(requestReader);
+
 		Map<String, String> result = new HashMap<String, String>();
-		
+
 		String temp = br.readLine();
-		if (temp == null) return null;
+		if (temp == null)
+			return null; // Content checking
 		while (temp != null) {
 			String[] temp2 = temp.split(":");
 			if (temp2.length != 2) {
-				return null;
+				return null; // Format checking
 			}
 			if (result.containsKey(temp2[0])) {
-				return null;
+				return null; // Duplication checking
 			}
-			
+
 			result.put(temp2[0], temp2[1]);
 			temp = br.readLine();
 		}
-		
+
 		return result;
 	}
-	
-	public static User userAuthentication(Map<String, String> parsedRequest, 
-			Map<String, User> users) {
+
+	/**
+	 * Authenticate the user information based on the input parsed request.
+	 * 
+	 * @param parsedRequest
+	 *            - Parsed HTTP servlet request.
+	 * @param users
+	 *            - The database that contains all user information
+	 * 
+	 * @return The authenticated user's information stored in the database. Return
+	 *         null if the user is unauthorized or the user authentication
+	 *         information cannot be found in the parsed request.
+	 */
+	public static User userAuthentication(Map<String, String> parsedRequest, Map<String, User> users) {
+		// Check if the user authentication information exists in the request.
 		String username = parsedRequest.get("username");
 		String password = parsedRequest.get("password");
-		
+
 		if (username == null || password == null) {
 			System.out.println("username or password is null");
 			return null;
 		}
-		
+
 		User targetUser = users.get(username);
-		
+
+		// Check if the user exists in the database
 		if (targetUser == null) {
 			System.out.println("targetUser is null");
 			return null;
 		}
-		
+
+		// Check whether the password in the request matches the user name.
 		if (!BCrypt.checkpw(password, targetUser.hashedPW)) {
 			System.out.println("incorrect password");
 			return null;
 		}
-		
+
 		return targetUser;
+	}
+
+	/**
+	 * Set the HTTP servlet response for a bad HTTP servlet request.
+	 * 
+	 * @param response
+	 *            - The HTTP servlet response. The content of the response will be
+	 *            set to indicate the request is bad.
+	 * @param statusCode
+	 *            - The HTTP status code that corresponds to the response.
+	 * 
+	 * @throws IOException
+	 *             When the input response is null, or an error occurs when writing
+	 *             the response content.
+	 */
+	static void responseToBadRequest(HttpServletResponse response, int statusCode) throws IOException {
+		if (response == null)
+			throw new IOException();
+
+		// Indicate the request is bad
+		response.getWriter().write("status:fail");
+		response.setStatus(statusCode);
 	}
 }

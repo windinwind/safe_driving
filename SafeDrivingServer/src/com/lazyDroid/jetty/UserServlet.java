@@ -7,9 +7,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 @SuppressWarnings("serial")
-public class UserServlet extends HttpServlet{
+public class UserServlet extends HttpServlet {
 	Map<String, User> users;
+
 	/**
 	 * The constructor of UserServlet.
 	 */
@@ -17,71 +20,87 @@ public class UserServlet extends HttpServlet{
 		this.users = users;
 		// TODO may add more things here
 	}
-	
+
 	/**
-	 * Handle the HTTP PUT method.
+	 * Handle the HTTP PUT method regarding safe point operations.
 	 * 
-	 * @param request - The HTTP request from a client.
+	 * @param request
+	 *            - The HTTP request from a client.
 	 * 
-	 * @param response - The HTTP response that will be send to the client.
+	 * @param response
+	 *            - The HTTP response that will be send to the client.
 	 * 
-	 * @throws IOException When a servlet IO exception occurs.
+	 * @throws IOException
+	 *             When a servlet IO exception occurs.
 	 */
 	@Override
-	protected void doPut(HttpServletRequest request, HttpServletResponse response) 
-			throws IOException {
+	protected void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		// TODO needs more things here
 		Map<String, String> parsedRequest = SafeDrivingUtils.parseRequest(request);
-		
+
 		User targetUser = SafeDrivingUtils.userAuthentication(parsedRequest, users);
 		if (targetUser == null) {
-			invalidUserResponse(response);
+			// Incorrect user name or password
+			SafeDrivingUtils.responseToBadRequest(response, HttpServletResponse.SC_UNAUTHORIZED);
 			return;
 		}
-		
+
+		// Check if the operation is valid
 		String action = parsedRequest.get("update");
 		if (action == null) {
-			invalidActionResponse(response);
+			// Invalid operation
+			SafeDrivingUtils.responseToBadRequest(response, HttpServletResponse.SC_NOT_ACCEPTABLE);
 			return;
 		}
-		
+
+		// Update the safe point for this user
 		int newSafePoint = Integer.parseInt(parsedRequest.get("update"));
 		targetUser.updateSafePoint(newSafePoint);
-		
+
 		response.getWriter().write("status:success");
 		response.setStatus(HttpServletResponse.SC_OK);
 	}
-	
+
+	/**
+	 * Handle the HTTP GET method regarding safe point operations.
+	 * 
+	 * @param request
+	 *            - The HTTP request from a client.
+	 * 
+	 * @param response
+	 *            - The HTTP response that will be send to the client.
+	 * 
+	 * @throws IOException
+	 *             When a servlet IO exception occurs.
+	 */
 	@Override
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) 
-			throws IOException {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		// Check if the request contains the user authentication information
 		String username = request.getParameter("username");
 		String password = request.getHeader("Authorization");
-		
+
 		if (username == null || password == null) {
-			invalidUserResponse(response);
+			// User authentication information not found
+			SafeDrivingUtils.responseToBadRequest(response, HttpServletResponse.SC_UNAUTHORIZED);
 			return;
 		}
-		
+
 		User targetUser = users.get(username);
 		if (targetUser == null) {
-			invalidUserResponse(response);
+			// User not found
+			SafeDrivingUtils.responseToBadRequest(response, HttpServletResponse.SC_UNAUTHORIZED);
+			return;
+		} else if (!BCrypt.checkpw(password, targetUser.hashedPW)) {
+			// Invalid password
+			SafeDrivingUtils.responseToBadRequest(response, HttpServletResponse.SC_UNAUTHORIZED);
 			return;
 		}
 		
-		System.out.println(username + " is getting point");
+		// Send the safe point to the user
 		response.getWriter().write("point:" + targetUser.getSafePoint());
-		System.out.println("user servlet response: point:" + targetUser.getSafePoint());
 		response.setStatus(HttpServletResponse.SC_OK);
-	}
-	
-	private void invalidUserResponse(HttpServletResponse response) throws IOException {
-		response.getWriter().write("status:fail");
-		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-	}
-	
-	private void invalidActionResponse(HttpServletResponse response) throws IOException {
-		response.getWriter().write("status:fail");
-		response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
+		// For debug
+		System.out.println(username + " is getting point");
+		System.out.println("user servlet response: point:" + targetUser.getSafePoint());
 	}
 }
