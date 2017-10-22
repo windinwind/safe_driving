@@ -41,34 +41,52 @@ public class SafeDrivingUtils {
 		Map<String, String> result = new HashMap<String, String>();
 
 		String thisLine = br.readLine();
-		if (thisLine == null)
-			return null; // Content checking
 		while (thisLine != null) {
-			String[] temp = thisLine.split(":");
-			if (temp.length != 2) {
-				return null; // Format checking
-			}
-			if (result.containsKey(temp[0])) {
+			String[] requestLine = parseRequestLine(thisLine);
+
+			if (result.containsKey(requestLine[0])) {
 				return null; // Duplication checking
 			}
 
-			result.put(temp[0], temp[1]);
+			result.put(requestLine[0], requestLine[1]);
 			thisLine = br.readLine();
 		}
 
 		return result;
 	}
-	
+
+	/**
+	 * Check whether a specific line of the request content is following the "simple
+	 * protocol"
+	 * 
+	 * @param requestLine
+	 *            - The target line of the request content
+	 * @return Splitted string based on the "simple protocol".
+	 */
+	private static String[] parseRequestLine(String requestLine) {
+		if (requestLine == null)
+			return null;
+
+		String[] result = requestLine.split(":");
+		if (result.length != 2)
+			return null;
+
+		return result;
+	}
+
 	/**
 	 * Helper method that creates a reader for reading the request content.
-	 * @param request - An HTTP request.
+	 * 
+	 * @param request
+	 *            - An HTTP request.
 	 * @return A reader for reading the request content.
-	 * @throws IOException The HTTP request is null or failed to create the reader.
+	 * @throws IOException
+	 *             The HTTP request is null or failed to create the reader.
 	 */
 	private static BufferedReader getRequestReader(HttpServletRequest request) throws IOException {
 		if (request == null)
 			throw new IOException();
-		
+
 		return new BufferedReader(new InputStreamReader(request.getInputStream()));
 	}
 
