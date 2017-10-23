@@ -1,6 +1,8 @@
 package com.lazyDroid.jetty;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Map;
 
 import javax.servlet.http.HttpServlet;
@@ -9,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 @SuppressWarnings("serial")
 public class LoginServlet extends HttpServlet {
-	Map<String, User> users;
+	private Connection dbConnection;
 
 	/**
 	 * The constructor of LoginServlet.
@@ -17,9 +19,9 @@ public class LoginServlet extends HttpServlet {
 	 * @param users
 	 *            - The database for safe driving project.
 	 */
-	LoginServlet(Map<String, User> users) {
+	LoginServlet(Connection dbConnection) {
 		// TODO may add more things here
-		this.users = users;
+		this.dbConnection = dbConnection;
 	}
 
 	/**
@@ -38,15 +40,22 @@ public class LoginServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		Map<String, String> parsedRequest = SafeDrivingUtils.parseRequest(request);
 
-		User targetUser = SafeDrivingUtils.userAuthentication(parsedRequest, users);
-		if (targetUser == null) {
-			// Login failed
-			SafeDrivingUtils.responseToBadRequest(response, HttpServletResponse.SC_UNAUTHORIZED);
-			return;
-		} else {
-			// Login succeeded
-			response.getWriter().write("status:success");
-			response.setStatus(HttpServletResponse.SC_OK);
+		Map<String, String> targetUser;
+
+		try {
+			targetUser = SafeDrivingUtils.userAuthentication(parsedRequest, dbConnection);
+
+			if (targetUser == null) {
+				// Login failed
+				SafeDrivingUtils.responseToBadRequest(response, HttpServletResponse.SC_UNAUTHORIZED);
+				return;
+			} else {
+				// Login succeeded
+				response.getWriter().write("status:success");
+				response.setStatus(HttpServletResponse.SC_OK);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 	}
 

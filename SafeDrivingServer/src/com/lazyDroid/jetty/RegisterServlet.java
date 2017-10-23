@@ -1,6 +1,9 @@
 package com.lazyDroid.jetty;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Map;
 
 import javax.servlet.http.HttpServlet;
@@ -11,7 +14,7 @@ import org.mindrot.jbcrypt.BCrypt;
 
 @SuppressWarnings("serial")
 public class RegisterServlet extends HttpServlet {
-	Map<String, User> users;
+	private Connection dbConnection;
 
 	/**
 	 * The constructor of RegisterServlet.
@@ -19,9 +22,9 @@ public class RegisterServlet extends HttpServlet {
 	 * @param users
 	 *            - The database for safe driving project.
 	 */
-	RegisterServlet(Map<String, User> users) {
+	RegisterServlet(Connection dbConnection) {
 		// TODO may add more things here
-		this.users = users;
+		this.dbConnection = dbConnection;
 	}
 
 	/**
@@ -54,16 +57,51 @@ public class RegisterServlet extends HttpServlet {
 		System.out.println("username: " + username);
 		System.out.println("password: " + password);
 
-		if (users.containsKey(username)) {
-			// User already exists
-			SafeDrivingUtils.responseToBadRequest(response, HttpServletResponse.SC_NOT_ACCEPTABLE);
-			return;
-		}
+		try {
+			Map<String, String> userInfo = SafeDrivingUtils.getUserInfo(username, dbConnection);
 
+			if (userInfo != null) {
+				// User already exists
+				SafeDrivingUtils.responseToBadRequest(response, HttpServletResponse.SC_NOT_ACCEPTABLE);
+				return;
+			}
+
+			if (!registerUser(username, BCrypt.hashpw(password, BCrypt.gensalt()), dbConnection)) {
+				// Insertion failed
+				SafeDrivingUtils.responseToBadRequest(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				return;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		// Registration succeeded
-		users.put(username, new User(username, BCrypt.hashpw(password, BCrypt.gensalt())));
 		response.getWriter().write("status:success");
 		response.setStatus(HttpServletResponse.SC_OK);
+	}
+
+	/**
+	 * Store the user information to the database.
+	 * 
+	 * @param username
+	 *            - The user name of the target user.
+	 * @param hashedPW
+	 *            - The hashed password of the target user.
+	 * @param dbConnection
+	 *            - The connection to the database.
+	 * @return True when the insertion is successful, false otherwise.
+	 * @throws SQLException
+	 *             When doing operations on the database, an error occurs.
+	 */
+	private static boolean registerUser(String username, String hashedPW, Connection dbConnection) throws SQLException {
+		// Setup the SQL query for inserting new user information to the database
+		String sqlQuery = "INSERT INTO user.user_info VALUES(?, ?, ?);";
+		PreparedStatement statement = dbConnection.prepareStatement(sqlQuery);
+		statement.setString(1, username);
+		statement.setString(2, hashedPW);
+		statement.setInt(3, SafeDrivingUtils.DEFAULT_SAFE_POINT);
+
+		// Execute the query
+		return statement.execute();
 	}
 
 	/**

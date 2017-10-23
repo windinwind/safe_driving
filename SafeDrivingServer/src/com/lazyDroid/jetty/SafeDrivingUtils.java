@@ -3,14 +3,20 @@ package com.lazyDroid.jetty;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.mindrot.jbcrypt.BCrypt;
+
+import com.lazyDroid.sql.SQLConnector;
 
 /**
  * Utility class for safe driving server.
@@ -19,6 +25,8 @@ import org.mindrot.jbcrypt.BCrypt;
  *
  */
 public class SafeDrivingUtils {
+	public static final int DEFAULT_SAFE_POINT = 100;
+
 	/**
 	 * Parse the content of the HTTP request based on the simple protocol
 	 * ("tag:content").
@@ -40,6 +48,7 @@ public class SafeDrivingUtils {
 
 		Map<String, String> result = new HashMap<String, String>();
 
+		// Parse each line of the request contents
 		String thisLine = br.readLine();
 		while (thisLine != null) {
 			String[] requestLine = parseRequestLine(thisLine);
@@ -95,14 +104,16 @@ public class SafeDrivingUtils {
 	 * 
 	 * @param parsedRequest
 	 *            - Parsed HTTP servlet request.
-	 * @param users
-	 *            - The database that contains all user information
+	 * @param dbConnection
+	 *            - Connection to the database that contains all user information
 	 * 
 	 * @return The authenticated user's information stored in the database. Return
 	 *         null if the user is unauthorized or the user authentication
 	 *         information cannot be found in the parsed request.
+	 * @throws SQLException
 	 */
-	public static User userAuthentication(Map<String, String> parsedRequest, Map<String, User> users) {
+	public static Map<String, String> userAuthentication(Map<String, String> parsedRequest, Connection dbConnection)
+			throws SQLException {
 		// Check if the user authentication information exists in the request.
 		String username = parsedRequest.get("username");
 		String password = parsedRequest.get("password");
@@ -112,21 +123,61 @@ public class SafeDrivingUtils {
 			return null;
 		}
 
-		User targetUser = users.get(username);
+		Map<String, String> targetUserInfo = getUserInfo(username, dbConnection);
 
 		// Check if the user exists in the database
-		if (targetUser == null) {
-			System.out.println("targetUser is null");
+		if (targetUserInfo == null) {
+			System.out.println("targetUserPass is null");
 			return null;
 		}
 
 		// Check whether the password in the request matches the user name.
-		if (!BCrypt.checkpw(password, targetUser.hashedPW)) {
+		if (!BCrypt.checkpw(password, targetUserInfo.get("userpass"))) {
 			System.out.println("incorrect password");
 			return null;
 		}
 
-		return targetUser;
+		return targetUserInfo;
+	}
+
+	/**
+	 * Obtain the target user information from the database.
+	 * 
+	 * @param username
+	 *            - The user name of the target user.
+	 * @param dbConnection
+	 *            - The connection to the database.
+	 * @return The map that contains all user information of the target user. Return
+	 *         null if the user is not found.
+	 * @throws SQLException
+	 *             An error occurs when doing SQL operations.
+	 */
+	static Map<String, String> getUserInfo(String username, Connection dbConnection) throws SQLException {
+		// Prepare SQL query
+		String sqlQuery = "SELECT * FROM user.user_info WHERE user_info.username = ?";
+		PreparedStatement statement = dbConnection.prepareStatement(sqlQuery);
+		statement.setString(1, username);
+
+		// Check connection to database
+		if (dbConnection.isClosed()) {
+			dbConnection = new SQLConnector().getDBConnection();
+		}
+
+		ResultSet results = statement.executeQuery();
+		ResultSetMetaData metadata = results.getMetaData();
+		int numCols = metadata.getColumnCount();
+
+		Map<String, String> retVal = new HashMap<String, String>();
+		if (!results.next()) return null; // Result is empty
+
+		// Put user information in the map
+		for (int i = 1; i <= numCols; i++) {
+			String tag = metadata.getColumnName(i);
+			String value = results.getString(tag);
+
+			retVal.put(tag, value);
+		}
+		return retVal;
 	}
 
 	/**
@@ -149,5 +200,29 @@ public class SafeDrivingUtils {
 		// Indicate the request is bad
 		response.getWriter().write("status:fail");
 		response.setStatus(statusCode);
+	}
+
+	/**
+	 * Update the safe point for the target user.
+	 * 
+	 * @param username
+	 *            - The user name of the target user
+	 * @param newPoint
+	 *            - The updated safe point
+	 * @param dbConnection
+	 *            - The connection to the database
+	 * @return True if the safe point is successfully updated, and false otherwise.
+	 * @throws SQLException
+	 *             If an error occurs when accessing the database.
+	 */
+	static boolean updateSafePoint(String username, int newPoint, Connection dbConnection) throws SQLException {
+		// Setup SQL query
+		String sqlQuery = "UPDATE user.user_info SET safepoint = ? WHERE username = ?";
+		PreparedStatement statement = dbConnection.prepareStatement(sqlQuery);
+		statement.setInt(1, newPoint);
+		statement.setString(2, username);
+
+		// Execute the query
+		return statement.execute();
 	}
 }
