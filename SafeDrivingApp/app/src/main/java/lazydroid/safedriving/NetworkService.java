@@ -1,5 +1,6 @@
 package lazydroid.safedriving;
 
+import android.content.pm.FeatureInfo;
 import android.os.AsyncTask;
 import android.util.Base64;
 import android.util.Log;
@@ -34,7 +35,13 @@ public class NetworkService extends AsyncTask<String, Boolean, Void> {
     private String valid_password = "";
     private int valid_point = 0;
 
+    /*
+     * Check if inputs to doInBackground are valid
+     */
     private boolean checkInputValid(String[] inputs){
+        if(inputs.length != 4){
+            return false;
+        }
         //check null pointer
         for(String input:inputs){
             if(input == null || input.equals("")){
@@ -49,7 +56,7 @@ public class NetworkService extends AsyncTask<String, Boolean, Void> {
     @Override
     protected Void doInBackground(String... params) {
         //do checks before connect to server
-        if(params.length != 4 || !checkInputValid(params) ){
+        if(!checkInputValid(params) ){
             //Log.d("network service", "incorrect argument length");
             return null;
         }
@@ -61,16 +68,7 @@ public class NetworkService extends AsyncTask<String, Boolean, Void> {
 
         try {
 
-            boolean status = false;
-
-            if(method.equals("login_post") || method.equals("register_post")){
-                status = prepareForPost(method, username, password);
-
-            }else if(method.equals("get")){
-                status = prepareForGet(method, username, password);
-            }else if(method.equals("put")){
-                status = prepareForPut(method, username, password, safepoint);
-            }
+            boolean status = deligateTaskAccordingToMethod(method, username, password, safepoint);
 
             //notify main thread
             publishProgress(status);
@@ -82,6 +80,24 @@ public class NetworkService extends AsyncTask<String, Boolean, Void> {
         }
 
         return null;
+    }
+
+    /*
+     * Deligate task to post, get, put helper methods accordingly
+     */
+    private boolean deligateTaskAccordingToMethod(String method, String username, String password, String safepoint)
+            throws MalformedURLException, UnsupportedEncodingException{
+        boolean status = FAIL;
+
+        if(method.equals("login_post") || method.equals("register_post")){
+            status = prepareForPost(method, username, password);
+
+        }else if(method.equals("get")){
+            status = prepareForGet(method, username, password);
+        }else if(method.equals("put")){
+            status = prepareForPut(method, username, password, safepoint);
+        }
+        return status;
     }
 
     /*
