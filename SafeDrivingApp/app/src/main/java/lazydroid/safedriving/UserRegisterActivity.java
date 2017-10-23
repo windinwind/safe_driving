@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -55,13 +56,14 @@ public class UserRegisterActivity extends AppCompatActivity {
     public static void updateStatus(boolean success){
 
         if(success){
-            feedback.setText("Login success");
+            feedback.setText("Registration success");
+            Toast.makeText(activity, "Registration success", Toast.LENGTH_SHORT).show();
             //finish this activity with success result
-            activity.setResult(RESULT_OK, null);
             activity.finish();
 
         }else{
-            feedback.setText("Invalid username or password");
+            feedback.setText("Registration failed");
+            Toast.makeText(activity, "Registration failed", Toast.LENGTH_SHORT).show();
         }
     }
 

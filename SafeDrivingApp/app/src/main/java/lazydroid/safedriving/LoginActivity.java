@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -85,12 +86,14 @@ public class LoginActivity extends AppCompatActivity {
 
         if(success && UserInfo.getUsername() != null){
             feedback.setText("Login success");
+            Toast.makeText(activity, "Login success", Toast.LENGTH_SHORT).show();
             //finish this activity with success result
             activity.setResult(RESULT_OK, null);
             activity.finish();
 
         }else{
             feedback.setText("Invalid username or password");
+            Toast.makeText(activity, "Invalid username or password", Toast.LENGTH_SHORT).show();
         }
     }
 

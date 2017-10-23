@@ -66,34 +66,18 @@ public class NetworkService extends AsyncTask<String, Boolean, Void> {
 
         try {
 
-            boolean success = false;
+            boolean status = false;
             if(method.equals("login_post") || method.equals("register_post")){
-                success = prepareForPost(method, username, password);
+                status = prepareForPost(method, username, password);
 
             }else if(method.equals("get")){
-                this.valid_method = method;
-
-                //set url based on username
-                URL url = new URL(userURL + "?username=" + username);
-
-                int point = getPointFromServer(url, password);
-
-                if(point != ERR) {
-                    //set safepoint to server response
-                    UserInfo.setSafepointLocal(point);
-                    success = true;
-                }
+                status = prepareForGet(method, username, password);
             }else if(method.equals("put")){
-                success = prepareForPut(method, username, password, safepoint);
-
+                status = prepareForPut(method, username, password, safepoint);
             }
 
             //notify main thread
-            if(success){
-                publishProgress(SUCCESS);
-            }else{
-                publishProgress(FAIL);
-            }
+            publishProgress(status);
 
         } catch (MalformedURLException e) {
             e.printStackTrace();
@@ -223,6 +207,25 @@ public class NetworkService extends AsyncTask<String, Boolean, Void> {
     }
 
     /*
+     * Prepare for URL to get safepoint from server
+     */
+    private boolean prepareForGet(String method, String username, String password)
+            throws MalformedURLException, UnsupportedEncodingException{
+        this.valid_method = method;
+
+        //set url based on username
+        URL url = new URL(userURL + "?username=" + username);
+        int point = getPointFromServer(url, password);
+
+        if(point != ERR) {
+            //set safepoint to server response
+            UserInfo.setSafepointLocal(point);
+            return true;
+        }
+        return false;
+    }
+
+    /*
      * Prepare for URL and content to post to server
      */
     private boolean prepareForPost(String method, String username, String password)
@@ -278,29 +281,15 @@ public class NetworkService extends AsyncTask<String, Boolean, Void> {
         if(progress.length != 1){
             return;
         }
-
+        boolean status = progress[0];
         //the update was success, needs to update GUI
-        if((this.valid_method.equals("get") || this.valid_method.equals("put")) && progress[0] == SUCCESS){
-            Log.d("updated point", Integer.toString(UserInfo.getSafepoint()));
+        if((this.valid_method.equals("get") || this.valid_method.equals("put")) && status == SUCCESS){
+            //Log.d("updated point", Integer.toString(UserInfo.getSafepoint()));
             SafeDrivingActivity.updateSafePointonGUI();
-            return;
-        }
-
-        if(this.valid_method.equals("login_post")){
-            if(progress[0] == SUCCESS) {
-                LoginActivity.updateStatus(SUCCESS);
-            }else{
-                LoginActivity.updateStatus(FAIL);
-            }
-            return;
-        }
-
-        if(this.valid_method.equals("register_post")){
-            if(progress[0] == SUCCESS) {
-                UserRegisterActivity.updateStatus(SUCCESS);
-            }else{
-                UserRegisterActivity.updateStatus(FAIL);
-            }
+        }else if(this.valid_method.equals("login_post")){
+            LoginActivity.updateStatus(status);
+        }else if(this.valid_method.equals("register_post")){
+            UserRegisterActivity.updateStatus(status);
         }
     }
 }
