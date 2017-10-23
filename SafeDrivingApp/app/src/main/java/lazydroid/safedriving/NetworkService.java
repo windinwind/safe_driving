@@ -34,11 +34,14 @@ public class NetworkService extends AsyncTask<String, Boolean, Void> {
     private String valid_password = "";
     private int valid_point = 0;
 
-    private boolean checkInputValid(String input){
+    private boolean checkInputValid(String[] inputs){
         //check null pointer
-        if(input == null || input.equals("")){
-            return false;
+        for(String input:inputs){
+            if(input == null || input.equals("")){
+                return false;
+            }
         }
+
         return true;
     }
 
@@ -46,8 +49,8 @@ public class NetworkService extends AsyncTask<String, Boolean, Void> {
     @Override
     protected Void doInBackground(String... params) {
         //do checks before connect to server
-        if(params.length != 4){
-            Log.d("network service", "incorrect argument length");
+        if(params.length != 4 || !checkInputValid(params) ){
+            //Log.d("network service", "incorrect argument length");
             return null;
         }
 
@@ -56,17 +59,10 @@ public class NetworkService extends AsyncTask<String, Boolean, Void> {
         String password = params[2];
         String safepoint = params[3];
 
-        //check argument validity
-        if(!checkInputValid(method) ||
-                !checkInputValid(username) ||
-                !checkInputValid(password) ||
-                !checkInputValid(safepoint)){
-            return null;
-        }
-
         try {
 
             boolean status = false;
+
             if(method.equals("login_post") || method.equals("register_post")){
                 status = prepareForPost(method, username, password);
 
@@ -283,7 +279,7 @@ public class NetworkService extends AsyncTask<String, Boolean, Void> {
         }
         boolean status = progress[0];
         //the update was success, needs to update GUI
-        if((this.valid_method.equals("get") || this.valid_method.equals("put")) && status == SUCCESS){
+        if(checkIfNeedUpdateGUI(status)){
             //Log.d("updated point", Integer.toString(UserInfo.getSafepoint()));
             SafeDrivingActivity.updateSafePointonGUI();
         }else if(this.valid_method.equals("login_post")){
@@ -291,5 +287,15 @@ public class NetworkService extends AsyncTask<String, Boolean, Void> {
         }else if(this.valid_method.equals("register_post")){
             UserRegisterActivity.updateStatus(status);
         }
+    }
+
+    /*
+     * Check if SafeDriving Activity needs to be updated
+     */
+    private boolean checkIfNeedUpdateGUI(boolean status){
+        if((this.valid_method.equals("get") || this.valid_method.equals("put")) && status == SUCCESS) {
+            return true;
+        }
+        return false;
     }
 }
