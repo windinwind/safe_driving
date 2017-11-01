@@ -100,6 +100,7 @@ public class RegisterServlet extends HttpServlet {
 			statement.setInt(3, SafeDrivingUtils.DEFAULT_SAFE_POINT);
 
 			// Execute the query
+			statement.execute();
 			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
