@@ -24,7 +24,7 @@ import java.net.URL;
 
 public class LoginActivity extends AppCompatActivity {
 
-    public static String loginURL = "http://34.210.113.123/login";
+    public static String loginURL = "http://35.182.114.230/login";
     private static Activity activity = null;
     private static TextView feedback;
 

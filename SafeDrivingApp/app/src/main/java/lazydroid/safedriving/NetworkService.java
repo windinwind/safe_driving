@@ -22,9 +22,9 @@ import java.net.URL;
 
 public class NetworkService extends AsyncTask<String, Boolean, Void> {
 
-    private static String userURL = "http://34.210.113.123/user";
-    private static String loginURL = "http://34.210.113.123/login";
-    private static String registerURL = "http://34.210.113.123/register";
+    private static String userURL = "http://35.182.114.230/user";
+    private static String loginURL = "http://35.182.114.230/login";
+    private static String registerURL = "http://35.182.114.230/register";
 
     private final int ERR = -1;
     private final boolean SUCCESS = true;
