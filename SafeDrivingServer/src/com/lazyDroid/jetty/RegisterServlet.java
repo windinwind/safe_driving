@@ -89,19 +89,22 @@ public class RegisterServlet extends HttpServlet {
 	 * @param dbConnection
 	 *            - The connection to the database.
 	 * @return True when the insertion is successful, false otherwise.
-	 * @throws SQLException
-	 *             When doing operations on the database, an error occurs.
 	 */
-	private static boolean registerUser(String username, String hashedPW, Connection dbConnection) throws SQLException {
+	private static boolean registerUser(String username, String hashedPW, Connection dbConnection) {
 		// Setup the SQL query for inserting new user information to the database
 		String sqlQuery = "INSERT INTO user.user_info VALUES(?, ?, ?);";
-		PreparedStatement statement = dbConnection.prepareStatement(sqlQuery);
-		statement.setString(1, username);
-		statement.setString(2, hashedPW);
-		statement.setInt(3, SafeDrivingUtils.DEFAULT_SAFE_POINT);
+		try {
+			PreparedStatement statement = dbConnection.prepareStatement(sqlQuery);
+			statement.setString(1, username);
+			statement.setString(2, hashedPW);
+			statement.setInt(3, SafeDrivingUtils.DEFAULT_SAFE_POINT);
 
-		// Execute the query
-		return statement.execute();
+			// Execute the query
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 	/**

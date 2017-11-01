@@ -23,7 +23,7 @@ import java.net.URL;
 
 public class UserRegisterActivity extends AppCompatActivity {
 
-    public static String registerURL = "http://34.210.113.123/register";
+    public static String registerURL = "http://35.182.114.230/register";
     private static Activity activity = null;
     private static TextView feedback;
 
