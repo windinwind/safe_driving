@@ -53,6 +53,11 @@ public class SafeDrivingUtils {
 		while (thisLine != null) {
 			String[] requestLine = parseRequestLine(thisLine);
 
+			if (requestLine == null) return null; // Format checking
+			
+			if ("".equals(requestLine[0]) || "".equals(requestLine[1]))
+				return null; // Content and Key cannot be empty
+			
 			if (result.containsKey(requestLine[0])) {
 				return null; // Duplication checking
 			}
