@@ -119,6 +119,8 @@ public class SafeDrivingUtils {
 	 */
 	public static Map<String, String> userAuthentication(Map<String, String> parsedRequest, Connection dbConnection)
 			throws SQLException {
+		if (parsedRequest == null) return null;
+		
 		// Check if the user authentication information exists in the request.
 		String username = parsedRequest.get("username");
 		String password = parsedRequest.get("password");
