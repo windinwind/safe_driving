@@ -1,6 +1,7 @@
 package com.lazyDroid.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -15,7 +16,7 @@ import com.lazyDroid.sql.SQLConnector;
 
 public class AuthenticationUnitTest {
 	private Connection dbConnection;
-	private String username = "kyrin";
+	private String username = "lazykyrin";
 	private String userPass123456 = "MWxhenlreXJpbjYxMjM0NTZsYXp5RHJvaWQ=";
 	
 	@Before
@@ -31,7 +32,8 @@ public class AuthenticationUnitTest {
 		parsedReq.put("password", userPass123456);
 		
 		Map<String, String> result = SafeDrivingUtils.userAuthentication(parsedReq, dbConnection);
-		assertEquals("kyrin", result.get("username"));
-		assertEquals(100, result.get("safepoint"));
+		assertNotNull(result);
+		assertEquals("lazykyrin", result.get("username"));
+		assertEquals("98", result.get("safepoint"));
 	}
 }
