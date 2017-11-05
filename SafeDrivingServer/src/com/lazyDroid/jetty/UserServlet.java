@@ -38,6 +38,13 @@ public class UserServlet extends HttpServlet {
 	protected void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		// TODO needs more things here
 		Map<String, String> parsedRequest = SafeDrivingUtils.parseRequest(request);
+		
+		System.out.println(parsedRequest);
+		
+		if (parsedRequest == null) {
+			SafeDrivingUtils.responseToBadRequest(response, HttpServletResponse.SC_NOT_ACCEPTABLE);
+			return;
+		}
 
 		try {
 			Map<String, String> targetUser = SafeDrivingUtils.userAuthentication(parsedRequest, dbConnection);
