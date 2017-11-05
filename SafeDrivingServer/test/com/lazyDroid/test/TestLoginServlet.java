@@ -37,13 +37,26 @@ public class TestLoginServlet {
 	}
 	
 	@Test
-	public void normalPostRequest() throws ServletException, IOException {
+	public void normalPostRequest() throws IOException {
 		String postReq = "username:" + username + "\npassword:" + userPass123456;
-		ServerTestUtils.generateRequestInputStream(postReq, request);
+		String responseContent = loginServletDoPostHelper(postReq);
+		assertEquals("status:success", responseContent);
+	}
+	
+	@Test
+	public void requestWithEmptyContent() throws IOException {
+		String postReq = "";
+		String responseContent = loginServletDoPostHelper(postReq);
+		assertEquals("status:fail", responseContent);
+	}
+	
+	private String loginServletDoPostHelper(String requestContent) throws IOException {
+		ServerTestUtils.generateRequestInputStream(requestContent, request);
 		ByteArrayOutputStream outstream = new ByteArrayOutputStream();
 		ServerTestUtils.setResponseWriter(response, outstream);
 		loginServlet.doPost(request, response);
-		assertEquals("status:success", outstream.toString());
+		
+		return outstream.toString();
 	}
 	
 	private class LoginServletForTesting extends LoginServlet {
