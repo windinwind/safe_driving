@@ -30,6 +30,7 @@ public class ServerTestUtils {
 		Answer<Void> answer = new Answer<Void>() {
 			@Override
 			public Void answer(InvocationOnMock invocation) throws Throwable {
+				System.out.println("Answering");
 				Object[] args = invocation.getArguments();
 				String strToWrite = (String)args[0];
 				outputstream.write(strToWrite.getBytes());
