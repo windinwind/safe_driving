@@ -86,6 +86,22 @@ public class TestUserServlet {
 		assertEquals("status:fail", outstream.toString());
 	}
 	
+	@Test
+	public void normalPutRequest() throws IOException {
+		String postReq = "username:" + username + "\npasword:" + userPass123456 + "\nupdate:98";
+		String responseContent = userServletDoPutHelper(postReq);
+		assertEquals("status:success", responseContent);
+	}
+	
+	private String userServletDoPutHelper(String requestContent) throws IOException {
+		ServerTestUtils.generateRequestInputStream(requestContent, request);
+		ByteArrayOutputStream outstream = new ByteArrayOutputStream();
+		ServerTestUtils.setResponseWriter(response, outstream);
+		userServlet.doPut(request, response);
+		
+		return outstream.toString();
+	}
+	
 	private String userServletDoGetHelper() throws IOException {
 		Mockito.when(request.getHeader(Mockito.anyString())).thenReturn(userPass123456);
 		Mockito.when(request.getParameter(Mockito.anyString())).thenReturn(username);
