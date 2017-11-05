@@ -39,6 +39,7 @@ public class LoginServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		Map<String, String> parsedRequest = SafeDrivingUtils.parseRequest(request);
+		System.out.println(parsedRequest);
 
 		Map<String, String> targetUser;
 
