@@ -40,7 +40,8 @@ public class TestLoginServlet {
 	public void normalPostRequest() throws ServletException, IOException {
 		String postReq = "username:" + username + "\npassword:" + userPass123456;
 		ServerTestUtils.generateRequestInputStream(postReq, request);
-		ByteArrayOutputStream outstream = ServerTestUtils.setResponseWriter(response);
+		ByteArrayOutputStream outstream = new ByteArrayOutputStream();
+		ServerTestUtils.setResponseWriter(response, outstream);
 		loginServlet.doPost(request, response);
 		assertEquals("status:success", outstream.toString());
 	}

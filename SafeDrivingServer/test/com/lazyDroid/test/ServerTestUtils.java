@@ -3,6 +3,7 @@ package com.lazyDroid.test;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Map;
 
@@ -12,6 +13,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import com.lazyDroid.jetty.SafeDrivingUtils;
 
@@ -20,9 +23,23 @@ public class ServerTestUtils {
 		Mockito.when(request.getMethod()).thenReturn(method);
 	}
 	
-	static ByteArrayOutputStream setResponseWriter(HttpServletResponse response) throws IOException {
+	static ByteArrayOutputStream setResponseWriter(HttpServletResponse response, OutputStream os) throws IOException {
 		ByteArrayOutputStream outputstream = new ByteArrayOutputStream();
-		Mockito.when(response.getWriter()).thenReturn(new PrintWriter(outputstream));
+		PrintWriter pw = Mockito.mock(PrintWriter.class);
+		
+		Answer<Void> answer = new Answer<Void>() {
+			@Override
+			public Void answer(InvocationOnMock invocation) throws Throwable {
+				Object[] args = invocation.getArguments();
+				String strToWrite = (String)args[0];
+				outputstream.write(strToWrite.getBytes());
+				return null;
+			}
+		};
+		
+		Mockito.doAnswer(answer).when(pw).write(Mockito.anyString());
+		
+		Mockito.when(response.getWriter()).thenReturn(pw);
 		Mockito.doNothing().when(response).setStatus(Mockito.anyInt());
 		return outputstream;
 	}
