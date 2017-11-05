@@ -28,16 +28,15 @@ public class ServerTestUtils {
 	}
 	
 	static Map<String, String> parseRequestHelper(String content, HttpServletRequest request) throws IOException {
-		ServletInputStream requestInputStream = generateServletInputStream(content);
-		Mockito.when(request.getInputStream()).thenReturn(requestInputStream);
+		generateRequestInputStream(content, request);
 		return SafeDrivingUtils.parseRequest(request);
 	}
 	
-	private static ServletInputStream generateServletInputStream(String content) {
+	static void generateRequestInputStream(String content, HttpServletRequest request) throws IOException {
 		if (content == null) content = "";
 		
 		ByteArrayInputStream tempInputStream = new ByteArrayInputStream(content.getBytes());
-		return new ServletInputStream() {
+		ServletInputStream requestInputStream = new ServletInputStream() {
 			@Override
 			public boolean isFinished() {
 				// Do nothing
@@ -58,5 +57,7 @@ public class ServerTestUtils {
 				return tempInputStream.read();
 			}
 		};
+		
+		Mockito.when(request.getInputStream()).thenReturn(requestInputStream);
 	}
 }
