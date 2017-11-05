@@ -80,7 +80,7 @@ public class ServerTestUtils {
 	}
 	
 	static void deleteUserFromDatabase(Connection dbConnection, String username) throws SQLException {
-		String query = "DELETE * FROM user.user_info WHERE user_info.username = ?";
+		String query = "DELETE FROM user.user_info WHERE user_info.username = ?";
 		PreparedStatement statement = dbConnection.prepareStatement(query);
 		statement.setString(1, username);
 		
