@@ -41,7 +41,7 @@ public class TestRegistrationServlet {
 	public void normalPostRequest() throws IOException, SQLException {
 		String postReq = "username:" + username + "\npassword:" + userPass123456;
 		String responseContent = registerServletDoPostHelper(postReq);
-		ServerTestUtils.deleteUserFromDatabase(dbConnection, responseContent);
+		ServerTestUtils.deleteUserFromDatabase(dbConnection, username);
 		assertEquals("status:success", responseContent);
 	}
 	
