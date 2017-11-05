@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import com.lazyDroid.jetty.UserServlet;
@@ -43,7 +44,8 @@ public class TestUserServlet {
 	}
 	
 	private String userServletDoGetHelper(String requestContent) throws IOException {
-		ServerTestUtils.generateRequestInputStream(requestContent, request);
+		Mockito.when(request.getHeader(Mockito.anyString())).thenReturn(userPass123456);
+		Mockito.when(request.getParameter(Mockito.anyString())).thenReturn(username);
 		ByteArrayOutputStream outstream = new ByteArrayOutputStream();
 		ServerTestUtils.setResponseWriter(response, outstream);
 		userServlet.doGet(request, response);
