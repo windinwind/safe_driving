@@ -53,11 +53,12 @@ public class SafeDrivingUtils {
 		while (thisLine != null) {
 			String[] requestLine = parseRequestLine(thisLine);
 
-			if (requestLine == null) return null; // Format checking
-			
+			if (requestLine == null)
+				return null; // Format checking
+
 			if ("".equals(requestLine[0]) || "".equals(requestLine[1]))
 				return null; // Content and Key cannot be empty
-			
+
 			if (result.containsKey(requestLine[0])) {
 				return null; // Duplication checking
 			}
@@ -119,8 +120,9 @@ public class SafeDrivingUtils {
 	 */
 	public static Map<String, String> userAuthentication(Map<String, String> parsedRequest, Connection dbConnection)
 			throws SQLException {
-		if (parsedRequest == null) return null;
-		
+		if (parsedRequest == null)
+			return null;
+
 		// Check if the user authentication information exists in the request.
 		String username = parsedRequest.get("username");
 		String password = parsedRequest.get("password");
@@ -175,7 +177,8 @@ public class SafeDrivingUtils {
 		int numCols = metadata.getColumnCount();
 
 		Map<String, String> retVal = new HashMap<String, String>();
-		if (!results.next()) return null; // Result is empty
+		if (!results.next())
+			return null; // Result is empty
 
 		// Put user information in the map
 		for (int i = 1; i <= numCols; i++) {
@@ -222,18 +225,25 @@ public class SafeDrivingUtils {
 	 * @throws SQLException
 	 *             If an error occurs when accessing the database.
 	 */
-	static boolean updateSafePoint(String username, int newPoint, Connection dbConnection) throws SQLException {
+	static boolean updateSafePoint(String username, int newPoint, Connection dbConnection) {
 		// Setup SQL query
 		String sqlQuery = "UPDATE user.user_info SET safepoint = ? WHERE username = ?";
-		PreparedStatement statement = dbConnection.prepareStatement(sqlQuery);
-		statement.setInt(1, newPoint);
-		statement.setString(2, username);
-		
-		if (dbConnection.isClosed()) {
-			dbConnection = new SQLConnector().getDBConnection();
-		}
+		try {
+			PreparedStatement statement = dbConnection.prepareStatement(sqlQuery);
+			statement.setInt(1, newPoint);
+			statement.setString(2, username);
 
-		// Execute the query
-		return statement.execute();
+			if (dbConnection.isClosed()) {
+				dbConnection = new SQLConnector().getDBConnection();
+			}
+
+			// Execute the query
+
+			statement.execute();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
 	}
 }
