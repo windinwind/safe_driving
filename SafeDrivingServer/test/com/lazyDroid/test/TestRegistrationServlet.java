@@ -87,16 +87,9 @@ public class TestRegistrationServlet {
 	}
 	
 	@Test
-	public void requestWithInvalidUsername() throws IOException, SQLException {
-		String postReq = "username:" + "aefbsd\n" + "password:" + userPass123456;
-		String responseContent = registerServletDoPostHelper(postReq);
-		ServerTestUtils.deleteUserFromDatabase(dbConnection, username);
-		assertEquals("status:fail", responseContent);
-	}
-	
-	@Test
-	public void requestWithInvalidPassword() throws IOException, SQLException {
-		String postReq = "username:" + username + "\npassword:" + userPass123456 + "abc";
+	public void requestWithExistingUsername() throws IOException, SQLException {
+		String postReq = "username:" + username + "password:" + userPass123456;
+		registerServletDoPostHelper(postReq);
 		String responseContent = registerServletDoPostHelper(postReq);
 		ServerTestUtils.deleteUserFromDatabase(dbConnection, username);
 		assertEquals("status:fail", responseContent);
