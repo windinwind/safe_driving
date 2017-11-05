@@ -89,6 +89,6 @@ public class ServerTestUtils {
 			dbConnection = new SQLConnector().getDBConnection();
 		}
 		
-		statement.executeQuery();
+		statement.execute();
 	}
 }
