@@ -40,7 +40,7 @@ public class TestUserServlet {
 	public void normalPostRequest() throws IOException {
 		String postReq = "username:" + username + "\npassword:" + userPass123456;
 		String responseContent = userServletDoGetHelper(postReq);
-		assertEquals("status:success", responseContent);
+		assertEquals("point:98", responseContent);
 	}
 	
 	private String userServletDoGetHelper(String requestContent) throws IOException {
