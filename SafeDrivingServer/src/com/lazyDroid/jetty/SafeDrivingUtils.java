@@ -228,6 +228,10 @@ public class SafeDrivingUtils {
 		PreparedStatement statement = dbConnection.prepareStatement(sqlQuery);
 		statement.setInt(1, newPoint);
 		statement.setString(2, username);
+		
+		if (dbConnection.isClosed()) {
+			dbConnection = new SQLConnector().getDBConnection();
+		}
 
 		// Execute the query
 		return statement.execute();
