@@ -1,7 +1,6 @@
 package com.lazyDroid.test;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
@@ -23,8 +22,7 @@ public class ServerTestUtils {
 		Mockito.when(request.getMethod()).thenReturn(method);
 	}
 	
-	static ByteArrayOutputStream setResponseWriter(HttpServletResponse response, OutputStream os) throws IOException {
-		ByteArrayOutputStream outputstream = new ByteArrayOutputStream();
+	static void setResponseWriter(HttpServletResponse response, OutputStream os) throws IOException {
 		PrintWriter pw = Mockito.mock(PrintWriter.class);
 		
 		Answer<Void> answer = new Answer<Void>() {
@@ -33,7 +31,7 @@ public class ServerTestUtils {
 				Object[] args = invocation.getArguments();
 				String strToWrite = (String)args[0];
 				System.out.println("Writing " + strToWrite);
-				outputstream.write(strToWrite.getBytes());
+				os.write(strToWrite.getBytes());
 				return null;
 			}
 		};
@@ -42,7 +40,6 @@ public class ServerTestUtils {
 		
 		Mockito.when(response.getWriter()).thenReturn(pw);
 		Mockito.doNothing().when(response).setStatus(Mockito.anyInt());
-		return outputstream;
 	}
 	
 	static Map<String, String> parseRequestHelper(String content, HttpServletRequest request) throws IOException {
