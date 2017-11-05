@@ -4,6 +4,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Map;
 
 import javax.servlet.ReadListener;
@@ -16,6 +19,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import com.lazyDroid.jetty.SafeDrivingUtils;
+import com.lazyDroid.sql.SQLConnector;
 
 public class ServerTestUtils {
 	static void setRequestMethod(String method, HttpServletRequest request) {
@@ -73,5 +77,18 @@ public class ServerTestUtils {
 		};
 		
 		Mockito.when(request.getInputStream()).thenReturn(requestInputStream);
+	}
+	
+	static void deleteUserFromDatabase(Connection dbConnection, String username) throws SQLException {
+		String query = "DELETE FROM user.user_info WHERE user_info.username = ?";
+		PreparedStatement statement = dbConnection.prepareStatement(query);
+		statement.setString(1, username);
+		
+		// Check connection to database
+		if (dbConnection.isClosed()) {
+			dbConnection = new SQLConnector().getDBConnection();
+		}
+		
+		statement.executeQuery();
 	}
 }

@@ -22,7 +22,7 @@ public class RegisterServlet extends HttpServlet {
 	 * @param users
 	 *            - The database for safe driving project.
 	 */
-	RegisterServlet(Connection dbConnection) {
+	protected RegisterServlet(Connection dbConnection) {
 		// TODO may add more things here
 		this.dbConnection = dbConnection;
 	}
