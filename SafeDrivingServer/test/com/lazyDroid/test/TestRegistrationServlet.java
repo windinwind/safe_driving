@@ -45,6 +45,71 @@ public class TestRegistrationServlet {
 		assertEquals("status:success", responseContent);
 	}
 	
+	@Test
+	public void requestWithOtherActions() throws IOException, SQLException {
+		String postReq = "username:" + username + "\npassword:" + userPass123456;
+		postReq = postReq + "\nother:actions" + "\nlazy:droid";
+		String responseContent = registerServletDoPostHelper(postReq);
+		ServerTestUtils.deleteUserFromDatabase(dbConnection, username);
+		assertEquals("status:success", responseContent);
+	}
+	
+	@Test
+	public void requestWithEmptyContent() throws IOException, SQLException {
+		String postReq = "";
+		String responseContent = registerServletDoPostHelper(postReq);
+		ServerTestUtils.deleteUserFromDatabase(dbConnection, username);
+		assertEquals("status:fail", responseContent);
+	}
+	
+	@Test
+	public void requestWithoutUsername() throws IOException, SQLException {
+		String postReq = "password:" + userPass123456;
+		String responseContent = registerServletDoPostHelper(postReq);
+		ServerTestUtils.deleteUserFromDatabase(dbConnection, username);
+		assertEquals("status:fail", responseContent);
+	}
+	
+	@Test
+	public void requestWithoutPassword() throws IOException, SQLException {
+		String postReq = "username:" + username;
+		String responseContent = registerServletDoPostHelper(postReq);
+		ServerTestUtils.deleteUserFromDatabase(dbConnection, username);
+		assertEquals("status:fail", responseContent);
+	}
+	
+	@Test
+	public void requestWithInvalidContent() throws IOException, SQLException {
+		String postReq = "username:" + username + "\npassword::" + userPass123456;
+		String responseContent = registerServletDoPostHelper(postReq);
+		ServerTestUtils.deleteUserFromDatabase(dbConnection, username);
+		assertEquals("status:fail", responseContent);
+	}
+	
+	@Test
+	public void requestWithInvalidUsername() throws IOException, SQLException {
+		String postReq = "username:" + "aefbsd\n" + "password:" + userPass123456;
+		String responseContent = registerServletDoPostHelper(postReq);
+		ServerTestUtils.deleteUserFromDatabase(dbConnection, username);
+		assertEquals("status:fail", responseContent);
+	}
+	
+	@Test
+	public void requestWithInvalidPassword() throws IOException, SQLException {
+		String postReq = "username:" + username + "\npassword:" + userPass123456 + "abc";
+		String responseContent = registerServletDoPostHelper(postReq);
+		ServerTestUtils.deleteUserFromDatabase(dbConnection, username);
+		assertEquals("status:fail", responseContent);
+	}
+	
+	@Test
+	public void requestWithInvalidActions() throws IOException, SQLException {
+		String postReq = "usernam:" + username + "\npasword:" + userPass123456;
+		String responseContent = registerServletDoPostHelper(postReq);
+		ServerTestUtils.deleteUserFromDatabase(dbConnection, username);
+		assertEquals("status:fail", responseContent);
+	}
+	
 	private String registerServletDoPostHelper(String requestContent) throws IOException {
 		ServerTestUtils.generateRequestInputStream(requestContent, request);
 		ByteArrayOutputStream outstream = new ByteArrayOutputStream();
