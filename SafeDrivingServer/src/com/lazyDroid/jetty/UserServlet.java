@@ -17,7 +17,7 @@ public class UserServlet extends HttpServlet {
 	/**
 	 * The constructor of UserServlet.
 	 */
-	UserServlet(Connection dbConnection) {
+	protected UserServlet(Connection dbConnection) {
 		this.dbConnection = dbConnection;
 		// TODO may add more things here
 	}

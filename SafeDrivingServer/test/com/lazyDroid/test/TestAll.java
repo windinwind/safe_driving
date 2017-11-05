@@ -6,7 +6,10 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({
-	TestSafeDrivingUtils.class
+	TestSafeDrivingUtils.class,
+	TestLoginServlet.class,
+	TestRegistrationServlet.class,
+	TestUserServlet.class
 })
 public class TestAll {
 
