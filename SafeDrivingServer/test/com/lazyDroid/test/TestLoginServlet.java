@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -44,8 +43,58 @@ public class TestLoginServlet {
 	}
 	
 	@Test
+	public void requestWithOtherActions() throws IOException {
+		String postReq = "username:" + username + "\npassword:" + userPass123456;
+		postReq = postReq + "\nother:actions" + "\nlazy:droid";
+		String responseContent = loginServletDoPostHelper(postReq);
+		assertEquals("status:success", responseContent);
+	}
+	
+	@Test
 	public void requestWithEmptyContent() throws IOException {
 		String postReq = "";
+		String responseContent = loginServletDoPostHelper(postReq);
+		assertEquals("status:fail", responseContent);
+	}
+	
+	@Test
+	public void requestWithoutUsername() throws IOException {
+		String postReq = "password:" + userPass123456;
+		String responseContent = loginServletDoPostHelper(postReq);
+		assertEquals("status:fail", responseContent);
+	}
+	
+	@Test
+	public void requestWithoutPassword() throws IOException {
+		String postReq = "username:" + username;
+		String responseContent = loginServletDoPostHelper(postReq);
+		assertEquals("status:fail", responseContent);
+	}
+	
+	@Test
+	public void requestWithInvalidContent() throws IOException {
+		String postReq = "username:" + username + "\npassword::" + userPass123456;
+		String responseContent = loginServletDoPostHelper(postReq);
+		assertEquals("status:fail", responseContent);
+	}
+	
+	@Test
+	public void requestWithInvalidUsername() throws IOException {
+		String postReq = "username:" + "aefbsd\n" + "password:" + userPass123456;
+		String responseContent = loginServletDoPostHelper(postReq);
+		assertEquals("status:fail", responseContent);
+	}
+	
+	@Test
+	public void requestWithInvalidPassword() throws IOException {
+		String postReq = "username:" + username + "\npassword:" + userPass123456 + "abc";
+		String responseContent = loginServletDoPostHelper(postReq);
+		assertEquals("status:fail", responseContent);
+	}
+	
+	@Test
+	public void requestWithInvalidActions() throws IOException {
+		String postReq = "usernam:" + username + "\npasword:" + userPass123456;
 		String responseContent = loginServletDoPostHelper(postReq);
 		assertEquals("status:fail", responseContent);
 	}
