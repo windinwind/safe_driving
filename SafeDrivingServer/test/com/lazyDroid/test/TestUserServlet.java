@@ -88,7 +88,7 @@ public class TestUserServlet {
 	
 	@Test
 	public void normalPutRequest() throws IOException {
-		String postReq = "username:" + username + "\npasword:" + userPass123456 + "\nupdate:98";
+		String postReq = "username:" + username + "\npassword:" + userPass123456 + "\nupdate:98";
 		String responseContent = userServletDoPutHelper(postReq);
 		assertEquals("status:success", responseContent);
 	}
