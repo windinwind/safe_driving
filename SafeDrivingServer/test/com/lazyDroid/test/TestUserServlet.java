@@ -37,13 +37,56 @@ public class TestUserServlet {
 	}
 	
 	@Test
-	public void normalPostRequest() throws IOException {
-		String postReq = "username:" + username + "\npassword:" + userPass123456;
-		String responseContent = userServletDoGetHelper(postReq);
+	public void normalGetRequest() throws IOException {
+		String responseContent = userServletDoGetHelper();
 		assertEquals("point:98", responseContent);
 	}
 	
-	private String userServletDoGetHelper(String requestContent) throws IOException {
+	@Test
+	public void getRequestWithoutParameter() throws IOException {
+		Mockito.when(request.getHeader(Mockito.anyString())).thenReturn(userPass123456);
+		Mockito.when(request.getParameter(Mockito.anyString())).thenReturn(null);
+		ByteArrayOutputStream outstream = new ByteArrayOutputStream();
+		ServerTestUtils.setResponseWriter(response, outstream);
+		userServlet.doGet(request, response);
+		
+		assertEquals("status:fail", outstream.toString());
+	}
+	
+	@Test
+	public void getRequestWithoutHeader() throws IOException {
+		Mockito.when(request.getHeader(Mockito.anyString())).thenReturn(null);
+		Mockito.when(request.getParameter(Mockito.anyString())).thenReturn(username);
+		ByteArrayOutputStream outstream = new ByteArrayOutputStream();
+		ServerTestUtils.setResponseWriter(response, outstream);
+		userServlet.doGet(request, response);
+		
+		assertEquals("status:fail", outstream.toString());
+	}
+	
+	@Test
+	public void getRequestWithInvalidUsername() throws IOException {
+		Mockito.when(request.getHeader(Mockito.anyString())).thenReturn(userPass123456);
+		Mockito.when(request.getParameter(Mockito.anyString())).thenReturn(username + "nouser");
+		ByteArrayOutputStream outstream = new ByteArrayOutputStream();
+		ServerTestUtils.setResponseWriter(response, outstream);
+		userServlet.doGet(request, response);
+		
+		assertEquals("status:fail", outstream.toString());
+	}
+	
+	@Test
+	public void getRequestWithInvalidPassword() throws IOException {
+		Mockito.when(request.getHeader(Mockito.anyString())).thenReturn(userPass123456 + "abc");
+		Mockito.when(request.getParameter(Mockito.anyString())).thenReturn(username);
+		ByteArrayOutputStream outstream = new ByteArrayOutputStream();
+		ServerTestUtils.setResponseWriter(response, outstream);
+		userServlet.doGet(request, response);
+		
+		assertEquals("status:fail", outstream.toString());
+	}
+	
+	private String userServletDoGetHelper() throws IOException {
 		Mockito.when(request.getHeader(Mockito.anyString())).thenReturn(userPass123456);
 		Mockito.when(request.getParameter(Mockito.anyString())).thenReturn(username);
 		ByteArrayOutputStream outstream = new ByteArrayOutputStream();
