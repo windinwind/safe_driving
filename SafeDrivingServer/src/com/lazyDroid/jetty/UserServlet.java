@@ -38,7 +38,7 @@ public class UserServlet extends HttpServlet {
 	protected void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		// TODO needs more things here
 		Map<String, String> parsedRequest = SafeDrivingUtils.parseRequest(request);
-		
+
 		if (parsedRequest == null) {
 			SafeDrivingUtils.responseToBadRequest(response, HttpServletResponse.SC_NOT_ACCEPTABLE);
 			return;
@@ -47,7 +47,6 @@ public class UserServlet extends HttpServlet {
 		try {
 			Map<String, String> targetUser = SafeDrivingUtils.userAuthentication(parsedRequest, dbConnection);
 			if (targetUser == null) {
-				System.out.println("Incorrect user name or password");
 				// Incorrect user name or password
 				SafeDrivingUtils.responseToBadRequest(response, HttpServletResponse.SC_UNAUTHORIZED);
 				return;
@@ -56,23 +55,28 @@ public class UserServlet extends HttpServlet {
 			// Check if the operation is valid
 			String action = parsedRequest.get("update");
 			if (action == null) {
-				System.out.println("Invalid operation");
 				// Invalid operation
 				SafeDrivingUtils.responseToBadRequest(response, HttpServletResponse.SC_NOT_ACCEPTABLE);
 				return;
 			}
 
-			// Update the safe point for this user
 			int newSafePoint = Integer.parseInt(parsedRequest.get("update"));
+			
+			if (newSafePoint < 0) {
+				// Invalid safe point value
+				SafeDrivingUtils.responseToBadRequest(response, HttpServletResponse.SC_NOT_ACCEPTABLE);
+				return;
+			}
 
 			if (!SafeDrivingUtils.updateSafePoint(targetUser.get("username"), newSafePoint, dbConnection)) {
-				System.out.println("Internel server error");
 				// Update operation failed
 				SafeDrivingUtils.responseToBadRequest(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 				return;
 			}
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
+			SafeDrivingUtils.responseToBadRequest(response, HttpServletResponse.SC_NOT_ACCEPTABLE);
+			return;
 		}
 
 		response.getWriter().write("status:success");

@@ -238,7 +238,6 @@ public class SafeDrivingUtils {
 			}
 
 			// Execute the query
-
 			statement.execute();
 		} catch (SQLException e) {
 			e.printStackTrace();

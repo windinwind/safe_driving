@@ -93,6 +93,48 @@ public class TestUserServlet {
 		assertEquals("status:success", responseContent);
 	}
 	
+	@Test
+	public void putRequestWithoutUsername() throws IOException {
+		String postReq = "password:" + userPass123456 + "\nupdate:98";
+		String responseContent = userServletDoPutHelper(postReq);
+		assertEquals("status:fail", responseContent);
+	}
+	
+	@Test
+	public void putRequestWithoutPassword() throws IOException {
+		String postReq = "username:" + username + "\nupdate:98";
+		String responseContent = userServletDoPutHelper(postReq);
+		assertEquals("status:fail", responseContent);
+	}
+	
+	@Test
+	public void putRequestWithoutUpdate() throws IOException {
+		String postReq = "username:" + username + "\npassword:" + userPass123456;
+		String responseContent = userServletDoPutHelper(postReq);
+		assertEquals("status:fail", responseContent);
+	}
+	
+	@Test
+	public void putRequestWithInvalidUsername() throws IOException {
+		String postReq = "username:" + username + "nouser" + "\bpassword:" + userPass123456 + "\nupdate:98";
+		String responseContent = userServletDoPutHelper(postReq);
+		assertEquals("status:fail", responseContent);
+	}
+	
+	@Test
+	public void putRequestWithInvalidPassword() throws IOException {
+		String postReq = "username:" + username + "\bpassword:" + userPass123456 + "abc" + "\nupdate:98";
+		String responseContent = userServletDoPutHelper(postReq);
+		assertEquals("status:fail", responseContent);
+	}
+	
+	@Test
+	public void putRequestWithInvalidUpdate() throws IOException {
+		String postReq = "username:" + username + "\bpassword:" + userPass123456 + "\nupdate:-1";
+		String responseContent = userServletDoPutHelper(postReq);
+		assertEquals("status:fail", responseContent);
+	}
+	
 	private String userServletDoPutHelper(String requestContent) throws IOException {
 		ServerTestUtils.generateRequestInputStream(requestContent, request);
 		ByteArrayOutputStream outstream = new ByteArrayOutputStream();
