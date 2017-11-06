@@ -17,7 +17,7 @@ public class UserServlet extends HttpServlet {
 	/**
 	 * The constructor of UserServlet.
 	 */
-	UserServlet(Connection dbConnection) {
+	protected UserServlet(Connection dbConnection) {
 		this.dbConnection = dbConnection;
 		// TODO may add more things here
 	}
@@ -39,6 +39,11 @@ public class UserServlet extends HttpServlet {
 		// TODO needs more things here
 		Map<String, String> parsedRequest = SafeDrivingUtils.parseRequest(request);
 
+		if (parsedRequest == null) {
+			SafeDrivingUtils.responseToBadRequest(response, HttpServletResponse.SC_NOT_ACCEPTABLE);
+			return;
+		}
+
 		try {
 			Map<String, String> targetUser = SafeDrivingUtils.userAuthentication(parsedRequest, dbConnection);
 			if (targetUser == null) {
@@ -55,16 +60,23 @@ public class UserServlet extends HttpServlet {
 				return;
 			}
 
-			// Update the safe point for this user
 			int newSafePoint = Integer.parseInt(parsedRequest.get("update"));
+			
+			if (newSafePoint < 0) {
+				// Invalid safe point value
+				SafeDrivingUtils.responseToBadRequest(response, HttpServletResponse.SC_NOT_ACCEPTABLE);
+				return;
+			}
 
 			if (!SafeDrivingUtils.updateSafePoint(targetUser.get("username"), newSafePoint, dbConnection)) {
 				// Update operation failed
 				SafeDrivingUtils.responseToBadRequest(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 				return;
 			}
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
+			SafeDrivingUtils.responseToBadRequest(response, HttpServletResponse.SC_NOT_ACCEPTABLE);
+			return;
 		}
 
 		response.getWriter().write("status:success");

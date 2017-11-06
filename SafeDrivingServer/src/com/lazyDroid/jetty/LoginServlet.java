@@ -19,7 +19,7 @@ public class LoginServlet extends HttpServlet {
 	 * @param users
 	 *            - The database for safe driving project.
 	 */
-	LoginServlet(Connection dbConnection) {
+	protected LoginServlet(Connection dbConnection) {
 		// TODO may add more things here
 		this.dbConnection = dbConnection;
 	}

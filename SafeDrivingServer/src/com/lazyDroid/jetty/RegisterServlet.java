@@ -22,7 +22,7 @@ public class RegisterServlet extends HttpServlet {
 	 * @param users
 	 *            - The database for safe driving project.
 	 */
-	RegisterServlet(Connection dbConnection) {
+	protected RegisterServlet(Connection dbConnection) {
 		// TODO may add more things here
 		this.dbConnection = dbConnection;
 	}
@@ -42,6 +42,12 @@ public class RegisterServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		Map<String, String> parsedRequest = SafeDrivingUtils.parseRequest(request);
+		
+		if (parsedRequest == null) {
+			// Bad request
+			SafeDrivingUtils.responseToBadRequest(response, HttpServletResponse.SC_NOT_ACCEPTABLE);
+			return;
+		}
 
 		String username = parsedRequest.get("username");
 		String password = parsedRequest.get("password");
