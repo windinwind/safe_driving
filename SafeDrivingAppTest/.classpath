@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="C:/Users/helen/Desktop/study/third-year/cpen321/safe-driving-appium-test/java-client-5.0.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/helen/Desktop/study/third-year/cpen321/safe-driving-appium-test/selenium-java-jar/client-combined-3.7.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/helen/Desktop/study/third-year/cpen321/safe-driving-appium-test/selenium-java-jar/client-combined-3.7.0-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/helen/Desktop/study/third-year/cpen321/safe-driving-appium-test/selenium-java-jar/libs/byte-buddy-1.7.5.jar"/>
+	<classpathentry kind="lib" path="C:/Users/helen/Desktop/study/third-year/cpen321/safe-driving-appium-test/selenium-java-jar/libs/commons-codec-1.10.jar"/>
+	<classpathentry kind="lib" path="C:/Users/helen/Desktop/study/third-year/cpen321/safe-driving-appium-test/selenium-java-jar/libs/commons-exec-1.3.jar"/>
+	<classpathentry kind="lib" path="C:/Users/helen/Desktop/study/third-year/cpen321/safe-driving-appium-test/selenium-java-jar/libs/commons-logging-1.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/helen/Desktop/study/third-year/cpen321/safe-driving-appium-test/selenium-java-jar/libs/gson-2.8.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/helen/Desktop/study/third-year/cpen321/safe-driving-appium-test/selenium-java-jar/libs/guava-23.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/helen/Desktop/study/third-year/cpen321/safe-driving-appium-test/selenium-java-jar/libs/httpclient-4.5.3.jar"/>
+	<classpathentry kind="lib" path="C:/Users/helen/Desktop/study/third-year/cpen321/safe-driving-appium-test/httpcore-4.4.8.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="C:/Users/helen/Desktop/study/third-year/cpen321/safe-driving-appium-test/commons-lang3-3.6.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
