@@ -1,6 +1,5 @@
 package lazydroid.safedriving;
 
-import android.content.pm.FeatureInfo;
 import android.os.AsyncTask;
 import android.util.Base64;
 import android.util.Log;
@@ -231,7 +230,7 @@ public class NetworkService extends AsyncTask<String, Boolean, Void> {
 
         if(point != ERR) {
             //set safepoint to server response
-            UserInfo.setSafepointLocal(point);
+            lazydroid.safedriving.UserInfo.setSafepointLocal(point);
             return true;
         }
         return false;
@@ -263,9 +262,9 @@ public class NetworkService extends AsyncTask<String, Boolean, Void> {
             this.valid_password = password_hash;
 
             if (method.equals("login_post")) {
-                UserInfo.setUsername(this.valid_username);
-                UserInfo.setPassword(this.valid_password);
-                UserInfo.getSafepointFromServer();
+                lazydroid.safedriving.UserInfo.setUsername(this.valid_username);
+                lazydroid.safedriving.UserInfo.setPassword(this.valid_password);
+                lazydroid.safedriving.UserInfo.getSafepointFromServer();
             }
         }
         return result;
@@ -297,11 +296,11 @@ public class NetworkService extends AsyncTask<String, Boolean, Void> {
         //the update was success, needs to update GUI
         if(checkIfNeedUpdateGUI(status)){
             //Log.d("updated point", Integer.toString(UserInfo.getSafepoint()));
-            SafeDrivingActivity.updateSafePointonGUI();
+            lazydroid.safedriving.SafeDrivingActivity.updateSafePointonGUI();
         }else if(this.valid_method.equals("login_post")){
-            LoginActivity.updateStatus(status);
+            lazydroid.safedriving.LoginActivity.updateStatus(status);
         }else if(this.valid_method.equals("register_post")){
-            UserRegisterActivity.updateStatus(status);
+            lazydroid.safedriving.UserRegisterActivity.updateStatus(status);
         }
     }
 

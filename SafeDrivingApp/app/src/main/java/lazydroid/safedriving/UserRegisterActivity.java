@@ -1,27 +1,15 @@
 package lazydroid.safedriving;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Base64;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-
-public class UserRegisterActivity extends AppCompatActivity {
+public class UserRegisterActivity extends ActionBarActivity {
 
     public static String registerURL = "http://35.182.114.230/register";
     private static Activity activity = null;

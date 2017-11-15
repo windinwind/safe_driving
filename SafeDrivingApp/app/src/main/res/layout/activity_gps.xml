@@ -10,29 +10,14 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="lazydroid.safedriving.LockScreenActivity">
 
-    <Button
-        android:text="Unlock"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/unlock_button"
-        android:onClick="unlockScreen"
-        android:layout_marginBottom="141dp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
-
     <TextView
         android:text="Timer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="68dp"
-        android:id="@+id/Timer"
+        android:id="@+id/status"
         android:layout_above="@+id/unlock_button"
         android:layout_centerHorizontal="true" />
-
-    <Chronometer android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/chrono"
-        android:visibility="gone"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -40,7 +25,8 @@
         android:layout_marginTop="77dp"
         android:id="@+id/unLockTimes"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:text="textView" />
 
     <TextView
         android:text="TextView"
@@ -49,28 +35,45 @@
         android:layout_below="@+id/unLockTimes"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="47dp"
+        android:id="@+id/averageSpeed" />
+
+    <TextView
+        android:text="TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/averageSpeed"
+        android:layout_alignLeft="@+id/unLockTimes"
+        android:layout_alignStart="@+id/unLockTimes"
+        android:layout_marginTop="55dp"
+        android:id="@+id/distance" />
+
+    <TextView
+        android:text="TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/distance"
+        android:layout_alignLeft="@+id/distance"
+        android:layout_alignStart="@+id/distance"
+        android:layout_marginTop="73dp"
         android:id="@+id/currentSpeed" />
+
+    <Chronometer android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/time"
+        android:visibility="gone"
+        android:layout_alignParentBottom="true"
+        android:layout_alignRight="@+id/status"
+        android:layout_alignEnd="@+id/status"
+        android:layout_marginBottom="62dp" />
 
     <Button
         android:text="Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignLeft="@+id/unlock_button"
-        android:layout_alignStart="@+id/unlock_button"
-        android:layout_marginBottom="35dp"
-        android:id="@+id/goToGpsButton"
-        android:onClick="goToGpsButtonClicked"
-        tools:text="GoToGPS" />
-
-    <TextView
-        android:text="TextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/status"
-        android:layout_marginBottom="29dp"
-        android:layout_above="@+id/currentSpeed"
-        android:layout_alignLeft="@+id/currentSpeed"
-        android:layout_alignStart="@+id/currentSpeed" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="53dp"
+        android:id="@+id/goBackButton"
+        android:onClick="goBackButtonClicked" />
 
 </RelativeLayout>
