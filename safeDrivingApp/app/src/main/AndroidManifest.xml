@@ -2,13 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="lazydroid.safedriving">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".SafeDrivingActivity">
@@ -21,7 +18,9 @@
         <activity android:name=".LoginActivity" />
         <activity android:name=".UserRegisterActivity" />
         <activity android:name=".LockScreenActivity" />
+        <activity android:name=".GpsActivity" />
 
+        <service android:name=".GpsService" />
         <service android:name=".LockScreenService" />
 
     </application>
@@ -30,5 +29,10 @@
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
 </manifest>
+
+<!-- android:roundIcon="@mipmap/ic_launcher_round" -->
