@@ -30,13 +30,17 @@ public class StoreActivity extends ActionBarActivity {
     private static String shopURL = "http://35.182.114.230/shop";
     private List<ProductInfo> product_list = new ArrayList<ProductInfo>();
 
+    private static TextView username;
+    private static TextView safepoint;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_store);
 
+        //get list of product
         new StoreNetworkService().execute("list");
 
+        //check if any product clicked
         ListView list = (ListView) findViewById(R.id.product_list);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -47,6 +51,18 @@ public class StoreActivity extends ActionBarActivity {
             }
         });
 
+        username = (TextView) findViewById(R.id.username);
+        safepoint =(TextView) findViewById(R.id.safe_point);
+        //display user info
+        if(UserInfo.getUsername() != null) {
+            updateDisplayUserInfo();
+        }
+
+    }
+
+    public static void updateDisplayUserInfo(){
+        username.setText(UserInfo.getUsername());
+        safepoint.setText(Integer.toString(UserInfo.getSafepoint()));
     }
 
     protected void navigateToItem(long id){
