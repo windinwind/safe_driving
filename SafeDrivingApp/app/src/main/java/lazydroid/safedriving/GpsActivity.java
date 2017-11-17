@@ -181,9 +181,6 @@ public class GpsActivity extends ActionBarActivity implements LocationListener, 
 
         if (mLocationManager.getAllProviders().indexOf(LocationManager.GPS_PROVIDER) >= 0) {
 
-            int permissionCheck = ContextCompat.checkSelfPermission(this,
-                    Manifest.permission.ACCESS_FINE_LOCATION);
-
             mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 500, 0, this);
         } else {
             Log.w("MainActivity", "No GPS location provider found. GPS data display will not be available.");
@@ -199,8 +196,7 @@ public class GpsActivity extends ActionBarActivity implements LocationListener, 
     @Override
     protected void onPause() {
         super.onPause();
-        int permissionCheck = ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION);
+
         mLocationManager.removeUpdates(this);
         mLocationManager.removeGpsStatusListener(this);
         SharedPreferences.Editor prefsEditor = sharedPreferences.edit();
@@ -257,8 +253,7 @@ public class GpsActivity extends ActionBarActivity implements LocationListener, 
     }
 
     public void onGpsStatusChanged (int event) {
-        int permissionCheck = ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION);
+
         switch (event) {
             case GpsStatus.GPS_EVENT_SATELLITE_STATUS:
                 GpsStatus gpsStatus = mLocationManager.getGpsStatus(null);
