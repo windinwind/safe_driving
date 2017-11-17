@@ -161,9 +161,6 @@ public class LockScreenActivity extends ActionBarActivity implements LocationLis
 
         if (mLocationManager.getAllProviders().indexOf(LocationManager.GPS_PROVIDER) >= 0) {
 
-            int permissionCheck = ContextCompat.checkSelfPermission(this,
-                    Manifest.permission.ACCESS_FINE_LOCATION);
-
             mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 500, 0, this);
         } else {
             Log.w("MainActivity", "No GPS location provider found. GPS data display will not be available.");
@@ -184,8 +181,6 @@ public class LockScreenActivity extends ActionBarActivity implements LocationLis
         UserInfo.setSafepoint(UserInfo.getSafepoint() - 1);
 
         //For GPS speed tracking
-        int permissionCheck = ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION);
         mLocationManager.removeUpdates(this);
         mLocationManager.removeGpsStatusListener(this);
         SharedPreferences.Editor prefsEditor = sharedPreferences.edit();
@@ -250,8 +245,7 @@ public class LockScreenActivity extends ActionBarActivity implements LocationLis
     }
 
     public void onGpsStatusChanged (int event) {
-        int permissionCheck = ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION);
+
         switch (event) {
             case GpsStatus.GPS_EVENT_SATELLITE_STATUS:
                 GpsStatus gpsStatus = mLocationManager.getGpsStatus(null);

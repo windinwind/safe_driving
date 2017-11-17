@@ -1,6 +1,5 @@
 package lazydroid.safedriving;
 
-import android.Manifest;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -13,7 +12,6 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.v4.content.ContextCompat;
 
 public class GpsService extends Service implements LocationListener, GpsStatus.Listener {
     private LocationManager mLocationManager;
@@ -41,8 +39,6 @@ public class GpsService extends Service implements LocationListener, GpsStatus.L
 
         mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
-        int permissionCheck = ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION);
         mLocationManager.addGpsStatusListener( this);
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 500, 0, this);
     }
