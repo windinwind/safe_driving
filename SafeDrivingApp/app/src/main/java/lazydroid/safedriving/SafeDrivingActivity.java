@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class SafeDrivingActivity extends ActionBarActivity {
 
@@ -109,5 +110,11 @@ public class SafeDrivingActivity extends ActionBarActivity {
 
     public static void updateSafePointonGUI(){
         point.setText(Integer.toString(UserInfo.getSafepoint()));
+    }
+
+    public void storeButtonClicked(View v){
+        //Toast.makeText(this, "Store button clicked", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, StoreActivity.class);
+        startActivityForResult(intent, 1);
     }
 }
