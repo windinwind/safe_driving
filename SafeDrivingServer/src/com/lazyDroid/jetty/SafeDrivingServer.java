@@ -37,7 +37,21 @@ public class SafeDrivingServer {
 		handler.addServletWithMapping(new ServletHolder(new LoginServlet(dbConnection)), "/login");
 		handler.addServletWithMapping(new ServletHolder(new RegisterServlet(dbConnection)), "/register");
 		handler.addServletWithMapping(new ServletHolder(new UserServlet(dbConnection)), "/user");
-		handler.addServletWithMapping(new ServletHolder(new ShopServlet()), "/shop");
+		
+		ShopServlet shop = new ShopServlet();
+		ProductServlet temp = new ProductServlet("flower", 1, "./pictures/flower.jpg");
+		shop.addProduct(temp);
+		handler.addServletWithMapping(new ServletHolder(temp), "/product/1");
+		
+		temp = new ProductServlet("sky", 10, "./pictures/sky.jpg");
+		shop.addProduct(temp);
+		handler.addServletWithMapping(new ServletHolder(temp), "/product/2");
+		
+		temp = new ProductServlet("thunder", 97, "./pictures/thunder.jpg");
+		shop.addProduct(temp);
+		handler.addServletWithMapping(new ServletHolder(temp), "/product/3");
+		
+		handler.addServletWithMapping(new ServletHolder(shop), "/shop");
 
 		// Run the server
 		server.setHandler(handler);
