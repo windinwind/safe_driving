@@ -31,6 +31,7 @@ public class ProductServlet extends HttpServlet {
 	
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		System.out.println("Someone is requesting the image " + productName);
 		response.setHeader("Content-Type", "image/jpeg");
 		FileInputStream pic = new FileInputStream(targetPic);
 		OutputStream outStream = response.getOutputStream();

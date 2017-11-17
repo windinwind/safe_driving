@@ -39,6 +39,7 @@ public class ShopServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		// TODO needs more things here
+		System.out.println("Someone is requesting the gift shop info.\n");
 		PrintWriter writer = response.getWriter();
 		
 		Integer i = 1;
