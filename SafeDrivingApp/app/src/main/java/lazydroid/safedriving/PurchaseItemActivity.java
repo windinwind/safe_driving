@@ -1,11 +1,13 @@
 package lazydroid.safedriving;
 
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -94,12 +96,27 @@ public class PurchaseItemActivity extends AppCompatActivity {
         values.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis());
 
         ContentResolver cr = getContentResolver();
-        cr.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+        Uri uri = cr.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+
+        OutputStream pictureOut = null;
+        try {
+            pictureOut = cr.openOutputStream(uri);
+            image_to_display.compress(Bitmap.CompressFormat.JPEG, 100, pictureOut);
+            long id = ContentUris.parseId(uri);
+            pictureOut.close();
+
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
 
         //store into the gallary
-        String path = MediaStore.Images.Media.insertImage(cr, image_to_display,
-                "SafeDriving Wall paper" ,"Thank you for using SafeDriving, wish you a safe trip <3");
-        return path;
+        //String path = MediaStore.Images.Media.insertImage(cr, image_to_display,
+        //        "SafeDriving Wall paper" ,"Thank you for using SafeDriving, wish you a safe trip <3");
+        return uri.toString();
     }
 
 
