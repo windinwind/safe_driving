@@ -78,15 +78,16 @@ public class PurchaseItemActivity extends AppCompatActivity {
             return;
         }
 
-        saveImage();
+        String path = saveImage();
 
-        Toast.makeText(this, "save success", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "saved to " + path, Toast.LENGTH_LONG).show();
     }
 
 
-    private void saveImage(){
-        MediaStore.Images.Media.insertImage(getContentResolver(), image_to_display,
+    private String saveImage(){
+        String path = MediaStore.Images.Media.insertImage(getContentResolver(), image_to_display,
                 "SafeDriving Wall paper" ,"Thank you for using SafeDriving, wish you a safe trip <3");
+        return path;
     }
 
 
@@ -105,13 +106,14 @@ public class PurchaseItemActivity extends AppCompatActivity {
             }
 
             //save to gallary
-            saveImage();
+            String path = saveImage();
 
             //deduct point
             UserInfo.setSafepoint(UserInfo.getSafepoint() - image_cost);
 
             //display success message
             Toast.makeText(this,"Purchase success",Toast.LENGTH_LONG).show();
+            Toast.makeText(this,"Image saved to " + path, Toast.LENGTH_LONG).show();
 
             //update GUI
             updateDisplayUserInfo();
