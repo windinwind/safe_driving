@@ -43,7 +43,7 @@
         android:layout_centerHorizontal="true" />
 
     <TextView
-        android:text="TextView"
+        android:text="current speed: n/a (no signal)"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/unLockTimes"
@@ -51,20 +51,7 @@
         android:layout_marginTop="47dp"
         android:id="@+id/currentSpeed" />
 
-    <Button
-        android:text="Button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignLeft="@+id/unlock_button"
-        android:layout_alignStart="@+id/unlock_button"
-        android:layout_marginBottom="35dp"
-        android:id="@+id/goToGpsButton"
-        android:onClick="goToGpsButtonClicked"
-        tools:text="GoToGPS" />
-
     <TextView
-        android:text="TextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/status"
