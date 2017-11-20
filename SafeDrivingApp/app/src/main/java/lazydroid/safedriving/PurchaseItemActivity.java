@@ -1,5 +1,7 @@
 package lazydroid.safedriving;
 
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -85,7 +87,17 @@ public class PurchaseItemActivity extends AppCompatActivity {
 
 
     private String saveImage(){
-        String path = MediaStore.Images.Media.insertImage(getContentResolver(), image_to_display,
+        //set image store time, title
+        ContentValues values = new ContentValues();
+        values.put(MediaStore.Images.Media.DISPLAY_NAME, "SafeDriving Wall Paper");
+        values.put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis());
+        values.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis());
+
+        ContentResolver cr = getContentResolver();
+        cr.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+
+        //store into the gallary
+        String path = MediaStore.Images.Media.insertImage(cr, image_to_display,
                 "SafeDriving Wall paper" ,"Thank you for using SafeDriving, wish you a safe trip <3");
         return path;
     }
