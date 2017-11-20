@@ -73,6 +73,8 @@ public class UserServlet extends HttpServlet {
 				SafeDrivingUtils.responseToBadRequest(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 				return;
 			}
+			
+			System.out.println(targetUser.get("username") + "'s safe point is updated to " + newSafePoint);
 		} catch (Exception e) {
 			e.printStackTrace();
 			SafeDrivingUtils.responseToBadRequest(response, HttpServletResponse.SC_NOT_ACCEPTABLE);
