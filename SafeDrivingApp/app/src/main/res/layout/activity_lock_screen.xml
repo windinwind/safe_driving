@@ -21,13 +21,14 @@
         android:layout_centerHorizontal="true" />
 
     <TextView
-        android:text="Timer"
+        android:id="@+id/Timer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="68dp"
-        android:id="@+id/Timer"
         android:layout_above="@+id/unlock_button"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="68dp"
+        android:text="Timer"
+        android:textAlignment="center" />
 
     <Chronometer android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -35,29 +36,31 @@
         android:visibility="gone"/>
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="77dp"
         android:id="@+id/unLockTimes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="76dp"
+        android:textAlignment="center" />
 
     <TextView
-        android:text="current speed: n/a (no signal)"
+        android:id="@+id/currentSpeed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/unLockTimes"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="47dp"
-        android:id="@+id/currentSpeed" />
+        android:text="current speed: n/a (no signal)"
+        android:textAlignment="center" />
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/status"
-        android:layout_marginBottom="29dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_above="@+id/currentSpeed"
-        android:layout_alignLeft="@+id/currentSpeed"
-        android:layout_alignStart="@+id/currentSpeed" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="28dp"
+        android:textAlignment="center" />
 
 </RelativeLayout>
