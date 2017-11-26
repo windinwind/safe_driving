@@ -19,7 +19,8 @@
         android:layout_marginBottom="141dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:theme="@style/AppTheme.Button"/>
+        android:theme="@style/AppTheme.Button"
+        android:background="@drawable/button_form"/>
 
     <TextView
         android:id="@+id/Timer"
@@ -29,7 +30,8 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="68dp"
         android:text="Timer"
-        android:textAlignment="center" />
+        android:textAlignment="center"
+        android:textSize="20sp"/>
 
     <Chronometer android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -43,7 +45,8 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="76dp"
-        android:textAlignment="center" />
+        android:textAlignment="center"
+        android:textSize="20sp"/>
 
     <TextView
         android:id="@+id/currentSpeed"
@@ -53,7 +56,8 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="47dp"
         android:text="current speed: n/a (no signal)"
-        android:textAlignment="center" />
+        android:textAlignment="center"
+        android:textSize="20sp"/>
 
     <TextView
         android:id="@+id/status"
@@ -62,6 +66,7 @@
         android:layout_above="@+id/currentSpeed"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="28dp"
-        android:textAlignment="center" />
+        android:textAlignment="center"
+        android:textSize="20sp"/>
 
 </RelativeLayout>
