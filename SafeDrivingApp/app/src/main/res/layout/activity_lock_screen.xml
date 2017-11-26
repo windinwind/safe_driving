@@ -18,7 +18,8 @@
         android:onClick="unlockScreen"
         android:layout_marginBottom="141dp"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:theme="@style/AppTheme.Button"/>
 
     <TextView
         android:id="@+id/Timer"

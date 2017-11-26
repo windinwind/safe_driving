@@ -22,30 +22,29 @@
         app:layout_constraintVertical_bias="0.65"
         android:onClick="startDrivingButtonClicked"
         android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp" />
+        android:layout_marginEnd="8dp"
+        android:theme="@style/AppTheme.Button"/>
 
     <TextView
         android:id="@+id/textView4"
-        android:layout_width="139dp"
+        android:layout_width="203dp"
         android:layout_height="52dp"
-        android:text="Welcome back!"
+        android:layout_marginBottom="8dp"
         android:layout_marginLeft="8dp"
-        app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Welcome back!"
+        android:textSize="25sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.575"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintVertical_bias="0.18"
-        android:textSize="20sp"
-        app:layout_constraintHorizontal_bias="0.502"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp" />
+        app:layout_constraintVertical_bias="0.18" />
 
     <Button
         android:id="@+id/login_button"
-        android:layout_width="wrap_content"
+        android:layout_width="127dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="7dp"
         android:layout_marginLeft="8dp"
@@ -57,7 +56,8 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.839" />
+        app:layout_constraintVertical_bias="0.839"
+        android:theme="@style/AppTheme.Button"/>
 
     <TextView
         android:id="@+id/after_login_username"
@@ -151,7 +151,7 @@
 
     <Button
         android:id="@+id/logout_button"
-        android:layout_width="wrap_content"
+        android:layout_width="127dp"
         android:layout_height="53dp"
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="8dp"
@@ -159,6 +159,7 @@
         android:layout_marginTop="8dp"
         android:onClick="logoutButtonClicked"
         android:text="logout"
+        android:theme="@style/AppTheme.Button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -167,7 +168,7 @@
 
     <Button
         android:id="@+id/store_button"
-        android:layout_width="wrap_content"
+        android:layout_width="127dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="8dp"
@@ -175,6 +176,7 @@
         android:layout_marginTop="6dp"
         android:onClick="storeButtonClicked"
         android:text="store"
+        android:theme="@style/AppTheme.Button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

@@ -23,7 +23,8 @@
         app:layout_constraintVertical_bias="0.65"
         android:onClick="registerButtonClicked"
         android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp" />
+        android:layout_marginEnd="8dp"
+        android:theme="@style/AppTheme.Button"/>
 
     <TextView
         android:id="@+id/textView"
