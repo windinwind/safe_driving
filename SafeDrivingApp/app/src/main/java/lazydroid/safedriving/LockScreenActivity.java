@@ -178,7 +178,12 @@ public class LockScreenActivity extends ActionBarActivity implements LocationLis
         super.onPause();
 
         badBehaviorCount.incCount(this);
-        UserInfo.setSafepoint(UserInfo.getSafepoint() - 1);
+
+        int userSafePoint = UserInfo.getSafepoint();
+
+        if (userSafePoint > 0) {
+            UserInfo.setSafepoint(UserInfo.getSafepoint() - 1);
+        }
 
         //For GPS speed tracking
         mLocationManager.removeUpdates(this);
@@ -210,7 +215,8 @@ public class LockScreenActivity extends ActionBarActivity implements LocationLis
         //Increment the bad behavior count everytime the user quits
 
 
-        UserInfo.setSafepoint(UserInfo.getSafepoint() + 1);
+        //UserInfo.setSafepoint(UserInfo.getSafepoint() + 1);
+        UserInfo.setLocalSafepoint(UserInfo.getSafepoint() + 1);
 
         finish();
     }
