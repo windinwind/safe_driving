@@ -1,6 +1,5 @@
 package lazydroid.safedriving;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -13,7 +12,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.text.SpannableString;
 import android.text.style.RelativeSizeSpan;
@@ -37,7 +35,7 @@ public class LockScreenActivity extends ActionBarActivity implements LocationLis
     TextView textTimer;
     long startTime;
     long countUp;
-    private String message = "Unlock Times: ";
+    private String message = "Bad Behavior Count: ";
 
     private SharedPreferences sharedPreferences;
     private LocationManager mLocationManager;
@@ -135,6 +133,8 @@ public class LockScreenActivity extends ActionBarActivity implements LocationLis
         status = (TextView) findViewById(R.id.status);
         currentSpeed = (TextView) findViewById(R.id.currentSpeed);
 
+        //Keep the screen on
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
 
@@ -237,7 +237,7 @@ public class LockScreenActivity extends ActionBarActivity implements LocationLis
                 speed = String.format(Locale.ENGLISH, "%.1f", location.getSpeed() * 3.6 * 0.62137119) + "mi/h";
             }
             SpannableString s = new SpannableString(speed);
-            s.setSpan(new RelativeSizeSpan(0.25f), s.length()-4, s.length(), 0);
+            s.setSpan(new RelativeSizeSpan(0.8f), s.length()-4, s.length(), 0);
             currentSpeed.setText(s);
             data.setCurSpeed(location.getSpeed());
         }

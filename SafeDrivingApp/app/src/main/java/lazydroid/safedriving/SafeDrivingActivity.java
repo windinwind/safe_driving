@@ -1,13 +1,16 @@
 package lazydroid.safedriving;
 
+import android.content.Context;
 import android.content.Intent;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.gc.materialdesign.widgets.Dialog;
 
 public class SafeDrivingActivity extends ActionBarActivity {
 
@@ -18,6 +21,7 @@ public class SafeDrivingActivity extends ActionBarActivity {
     private Button login_button;
     private Button logout_button;
 
+    private LocationManager mLocationManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +36,18 @@ public class SafeDrivingActivity extends ActionBarActivity {
         login_button = (Button)findViewById(R.id.login_button);
         logout_button = (Button)findViewById(R.id.logout_button);
 
+        mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
         setLogoutGUI();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (!mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            showGpsDisabledDialog();
+        }
     }
 
     /*
@@ -116,5 +131,17 @@ public class SafeDrivingActivity extends ActionBarActivity {
         //Toast.makeText(this, "Store button clicked", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(this, StoreActivity.class);
         startActivityForResult(intent, 1);
+    }
+
+    public void showGpsDisabledDialog(){
+        Dialog dialog = new Dialog(this, getResources().getString(R.string.gps_disabled), getResources().getString(R.string.please_enable_gps));
+
+        dialog.setOnAcceptButtonClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent("android.settings.LOCATION_SOURCE_SETTINGS"));
+            }
+        });
+        dialog.show();
     }
 }

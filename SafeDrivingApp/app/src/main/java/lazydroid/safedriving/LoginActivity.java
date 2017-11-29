@@ -2,6 +2,7 @@ package lazydroid.safedriving;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -23,6 +24,8 @@ public class LoginActivity extends ActionBarActivity {
 
     private CheckBox remember;
 
+    private LocationManager mLocationManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,6 +45,11 @@ public class LoginActivity extends ActionBarActivity {
         userNameEdit.setText(UserInfo.getUsername());
         passwordEdit.setText(password);
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     /*
